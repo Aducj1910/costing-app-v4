@@ -14,6 +14,7 @@ class App extends Component {
     patternRenderSwitch: false,
     componentRenderSwitch: false,
     silhouetteRenderSwitch: false,
+    deleteActiveObject: false,
     currentComp: null,
     currentSilhouette: null,
     buttonProcessing: [0, "outline-warning", "Process"],
@@ -25,6 +26,24 @@ class App extends Component {
   //   this.hiddenInputRef = React.createRef(null);
   //   this.setState({ hiddenRef: this.hiddenInputRef });
   // }
+
+  componentDidMount() {
+    document.addEventListener("keydown", this.keyFunction, false);
+  }
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this.keyFunction, false);
+  }
+
+  keyFunction = (event) => {
+    if (event.keyCode === 46) {
+      this.setState({
+        deleteActiveObject: true,
+        patternRenderSwitch: false,
+        componentRenderSwitch: false,
+        silhouetteRenderSwitch: false,
+      });
+    }
+  };
 
   handleUploadedComponentFiles = (event) => {
     this.setState({
@@ -187,6 +206,7 @@ class App extends Component {
               currentSilhouette={this.state.currentSilhouette}
               currentPatternComp={this.state.currentPatternComp}
               patternRenderSwitch={this.state.patternRenderSwitch}
+              deleteActiveObject={this.state.deleteActiveObject}
             ></MainDesign>
           </Route>
         </Switch>

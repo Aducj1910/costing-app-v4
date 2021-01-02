@@ -9,6 +9,7 @@ const Fabric_Canvas_My = (props) => {
     componentRenderSwitch,
     patternRenderSwitch,
     currentPatternComp,
+    deleteActiveObject,
   } = props;
 
   const [canvas, setCanvas] = useState("");
@@ -65,6 +66,10 @@ const Fabric_Canvas_My = (props) => {
     canvas.setBackgroundImage(patternImg_);
   };
 
+  const removeObject = () => {
+    canvas.remove(canvas.getActiveObject());
+  };
+
   if (silhouetteRenderSwitch) {
     addSilhouette();
   }
@@ -75,6 +80,10 @@ const Fabric_Canvas_My = (props) => {
 
   if (patternRenderSwitch) {
     addPattern();
+  }
+
+  if (deleteActiveObject) {
+    removeObject();
   }
 
   return (
