@@ -25,6 +25,10 @@ class MainDesign extends Component {
                 combinedSilhouettesArray={this.props.combinedSilhouettesArray}
                 drawSilhouettes={this.props.drawSilhouettes}
                 drawPattern={this.props.drawPattern}
+                onHandleColorChangeComplete={
+                  this.props.onHandleColorChangeComplete
+                }
+                bgColor={this.props.bgColor}
               ></ToolBar>
             </Col>
             <Col>
@@ -40,8 +44,10 @@ class MainDesign extends Component {
                 currentSilhouette={this.props.currentSilhouette}
                 silhouetteRenderSwitch={this.props.silhouetteRenderSwitch}
                 patternRenderSwitch={this.props.patternRenderSwitch}
+                colorRenderSwitch={this.props.colorRenderSwitch}
                 currentPatternComp={this.props.currentPatternComp}
                 deleteActiveObject={this.props.deleteActiveObject}
+                bgColor={this.props.bgColor}
               ></Fabric_Canvas_My>
             </Col>
             <Col ml="2">

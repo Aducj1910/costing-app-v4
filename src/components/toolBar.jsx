@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { ButtonGroup, Button } from "react-bootstrap";
-import { FaEyeDropper } from "react-icons/fa";
 import ComponentDropdown from "./componentDropdown";
+import EyeDropTool from "./eyeDropTool";
 import PatternDropdown from "./patternDropdown";
 import SilhouettesDropdown from "./silhouettesDropdown";
 
@@ -10,10 +10,10 @@ class ToolBar extends Component {
   render() {
     return (
       <ButtonGroup vertical>
-        <Button>
-          {" "}
-          <FaEyeDropper /> Color
-        </Button>
+        <EyeDropTool
+          onHandleColorChangeComplete={this.props.onHandleColorChangeComplete}
+          bgColor={this.props.bgColor}
+        />
         <ComponentDropdown
           label="Components"
           uploadedComponentFiles={this.props.uploadedComponentFiles}

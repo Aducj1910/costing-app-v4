@@ -14,9 +14,11 @@ class App extends Component {
     patternRenderSwitch: false,
     componentRenderSwitch: false,
     silhouetteRenderSwitch: false,
+    colorRenderSwitch: false,
     deleteActiveObject: false,
     currentComp: null,
     currentSilhouette: null,
+    bgColor: "#ffffff",
     buttonProcessing: [0, "outline-warning", "Process"],
   }; //importedComponentFiles for firestore database
 
@@ -69,6 +71,7 @@ class App extends Component {
       componentRenderSwitch: true,
       silhouetteRenderSwitch: false,
       patternRenderSwitch: false,
+      colorRenderSwitch: false,
     });
   };
 
@@ -78,6 +81,7 @@ class App extends Component {
       silhouetteRenderSwitch: true,
       componentRenderSwitch: false,
       patternRenderSwitch: false,
+      colorRenderSwitch: false,
     });
   };
 
@@ -87,6 +91,16 @@ class App extends Component {
       patternRenderSwitch: true,
       silhouetteRenderSwitch: false,
       componentRenderSwitch: false,
+      colorRenderSwitch: false,
+    });
+  };
+
+  drawColor = () => {
+    this.setState({
+      colorRenderSwitch: true,
+      silhouetteRenderSwitch: false,
+      componentRenderSwitch: false,
+      patternRenderSwitch: false,
     });
   };
 
@@ -96,6 +110,10 @@ class App extends Component {
 
   handleUploadedSilhouetteMaskFiles = (event) => {
     this.setState({ uploadedSilhouetteMaskFiles: event.target.files[0] });
+  };
+
+  handleColorChangeComplete = (color) => {
+    this.setState({ bgColor: color.hex, colorRenderSwitch: true });
   };
 
   handleSilhouettesCombine = () => {
@@ -206,7 +224,10 @@ class App extends Component {
               currentSilhouette={this.state.currentSilhouette}
               currentPatternComp={this.state.currentPatternComp}
               patternRenderSwitch={this.state.patternRenderSwitch}
+              colorRenderSwitch={this.state.colorRenderSwitch}
               deleteActiveObject={this.state.deleteActiveObject}
+              bgColor={this.state.bgColor}
+              onHandleColorChangeComplete={this.handleColorChangeComplete}
             ></MainDesign>
           </Route>
         </Switch>

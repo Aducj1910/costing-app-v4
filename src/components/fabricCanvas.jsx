@@ -8,8 +8,10 @@ const Fabric_Canvas_My = (props) => {
     silhouetteRenderSwitch,
     componentRenderSwitch,
     patternRenderSwitch,
+    colorRenderSwitch,
     currentPatternComp,
     deleteActiveObject,
+    bgColor,
   } = props;
 
   const [canvas, setCanvas] = useState("");
@@ -70,6 +72,15 @@ const Fabric_Canvas_My = (props) => {
     canvas.remove(canvas.getActiveObject());
   };
 
+  const addColor = () => {
+    console.log(bgColor);
+
+    let blankImage = new fabric.Image();
+
+    canvas.setBackgroundImage(blankImage);
+    canvas.backgroundColor = bgColor;
+  };
+
   if (silhouetteRenderSwitch) {
     addSilhouette();
   }
@@ -80,6 +91,10 @@ const Fabric_Canvas_My = (props) => {
 
   if (patternRenderSwitch) {
     addPattern();
+  }
+
+  if (colorRenderSwitch) {
+    addColor();
   }
 
   if (deleteActiveObject) {
