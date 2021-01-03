@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { fabric } from "fabric";
+import { Row } from "react-bootstrap";
+import EditingCanvas from "./editingCanvas";
 
 const Fabric_Canvas_My = (props) => {
   const {
@@ -23,7 +25,6 @@ const Fabric_Canvas_My = (props) => {
     new fabric.Canvas("canvas", {
       height: 500,
       width: 700,
-      preserveObjectStacking: true,
     });
 
   let comp = new Image();
@@ -73,12 +74,19 @@ const Fabric_Canvas_My = (props) => {
   };
 
   const addColor = () => {
-    console.log(bgColor);
+    var colorImg = new fabric.Rect({
+      width: 700,
+      height: 500,
+      fill: bgColor,
+    });
 
-    let blankImage = new fabric.Image();
-
-    canvas.setBackgroundImage(blankImage);
-    canvas.backgroundColor = bgColor;
+    colorImg.cloneAsImage(
+      (function () {
+        return function (clone) {
+          canvas.setBackgroundImage(clone);
+        };
+      })()
+    );
   };
 
   if (silhouetteRenderSwitch) {
@@ -95,15 +103,21 @@ const Fabric_Canvas_My = (props) => {
 
   if (colorRenderSwitch) {
     addColor();
+    //create pattern image of that type
   }
 
-  if (deleteActiveObject) {
+  if (deleteActiveObject && canvas.getActiveObject() != null) {
     removeObject();
   }
 
   return (
     <div>
-      <canvas id="canvas" />
+      <Row>
+        <canvas id="canvas" />
+      </Row>
+      <Row>
+        <EditingCanvas />
+      </Row>
     </div>
   );
 };

@@ -16,6 +16,7 @@ class App extends Component {
     silhouetteRenderSwitch: false,
     colorRenderSwitch: false,
     deleteActiveObject: false,
+    editingModeOn: false,
     currentComp: null,
     currentSilhouette: null,
     bgColor: "#ffffff",
@@ -53,6 +54,10 @@ class App extends Component {
         ...this.state.uploadedComponentFiles,
         ...event.target.files,
       ],
+      patternRenderSwitch: false,
+      componentRenderSwitch: false,
+      silhouetteRenderSwitch: false,
+      colorRenderSwitch: false,
     });
   };
 
@@ -226,6 +231,7 @@ class App extends Component {
               patternRenderSwitch={this.state.patternRenderSwitch}
               colorRenderSwitch={this.state.colorRenderSwitch}
               deleteActiveObject={this.state.deleteActiveObject}
+              editingModeOn={this.state.editingModeOn}
               bgColor={this.state.bgColor}
               onHandleColorChangeComplete={this.handleColorChangeComplete}
             ></MainDesign>

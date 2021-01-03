@@ -1,0 +1,9 @@
+1. If it says canvas.getActiveObject() is not a function when using it with props, try removing the () from the props passing.
+
+eg. const myFunction = () =>{
+    let obj = canvas.getActiveObject();
+}
+
+<MyComponent myFun = {myFunction}>
+
+instead of using {myFunction()} in the last line
