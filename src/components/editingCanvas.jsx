@@ -2,7 +2,7 @@ import React, { Component, useState, useEffect } from "react";
 import { fabric } from "fabric";
 
 const EditingCanvas = (props) => {
-  const { editFun } = props;
+  const { editFun, isEditingModeOn } = props;
 
   const [canvas2, setCanvas] = useState("");
   useEffect(() => {
@@ -16,21 +16,10 @@ const EditingCanvas = (props) => {
     });
 
   const RenderEditableObject = () => {
+    console.log("render_edit");
     var objectToRender = editFun();
     canvas2.add(objectToRender);
   };
-
-  //   const editInCanvas = () => {
-  //     focusObject = getCurrentSelectedObject();
-
-  //     if (focusObject !== null) {
-  //       canvas2.add(focusObject);
-  //     }
-  //   };
-
-  //   if (editingModeOn) {
-  //     editInCanvas();
-  //   }
 
   return (
     <React.Fragment>

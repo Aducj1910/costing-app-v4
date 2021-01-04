@@ -6,15 +6,7 @@ import PatternDropdown from "./patternDropdown";
 import SilhouettesDropdown from "./silhouettesDropdown";
 
 class ToolBar extends Component {
-  state = {};
-
-  getEditButtonDisplay = () => {
-    if (this.props.isObjectSelected) {
-      return "true";
-    } else {
-      return "none";
-    }
-  };
+  state = { editButtonDisplay: "none" };
 
   render() {
     return (
@@ -38,12 +30,9 @@ class ToolBar extends Component {
           uploadedPatternFiles={this.props.uploadedPatternFiles}
           drawPattern={this.props.drawPattern}
         />
-        <Button
-          variant="danger"
-          style={{ display: this.getEditButtonDisplay() }}
-        >
+        {/* <Button variant="danger" style={{ display: "true" }}>
           Edit
-        </Button>
+        </Button> */}
       </ButtonGroup>
     );
   }

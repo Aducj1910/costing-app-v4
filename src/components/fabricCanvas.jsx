@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { fabric } from "fabric";
 import { Row } from "react-bootstrap";
 import EditingCanvas from "./editingCanvas";
+import { Button } from "react-bootstrap";
 
 const Fabric_Canvas_My = (props) => {
   const {
@@ -14,7 +15,6 @@ const Fabric_Canvas_My = (props) => {
     currentPatternComp,
     deleteActiveObject,
     bgColor,
-    onHandleObjectSelection,
   } = props;
 
   const [canvas, setCanvas] = useState("");
@@ -43,10 +43,19 @@ const Fabric_Canvas_My = (props) => {
   var silhouettesGroup = new fabric.Group();
   var patternsGroup = new fabric.Group();
 
+  //Object renditions
   const addComponent = () => {
     comp.src = currentComp;
-    comp_ = new fabric.Image(comp);
+    comp_ = new fabric.Image(comp, { left: 100, top: 15 }); //left, top are used to indicate the inital render position of the object
     componentsGroup.addWithUpdate(comp_);
+
+    canvas.on("selection:created", function (options) {
+      document.getElementById("editButton").disabled = false;
+    });
+
+    canvas.on("selection:cleared", function (options) {
+      document.getElementById("editButton").disabled = true;
+    });
 
     canvas.add(comp_);
   };
@@ -115,16 +124,18 @@ const Fabric_Canvas_My = (props) => {
     removeObject();
   }
 
-  if (canvas.getActiveObject === null) {
-    onHandleObjectSelection(false);
-  } else if (canvas.getActiveObject !== null) {
-    onHandleObjectSelection(true);
-  }
-
   return (
     <div>
       <Row>
         <canvas id="canvas" />
+      </Row>
+
+      <Row xs={4} className="justify-content-md-center">
+        {" "}
+        {/* Have to add this button in this file because of bug in fabric.js */}
+        <Button variant="danger" id="editButton" disabled={true}>
+          Edit
+        </Button>
       </Row>
       <Row>
         <EditingCanvas editFun={editingObjectGetter} />

@@ -19,7 +19,6 @@ class App extends Component {
     editingModeOn: false,
     currentComp: null,
     currentSilhouette: null,
-    isObjectSelected: false,
     bgColor: "#ffffff",
     buttonProcessing: [0, "outline-warning", "Process"],
   }; //importedComponentFiles for firestore database
@@ -33,10 +32,14 @@ class App extends Component {
 
   componentDidMount() {
     document.addEventListener("keydown", this.keyFunction, false);
+    document.addEventListener("click", this.mouseFunction, false);
   }
   componentWillUnmount() {
     document.removeEventListener("keydown", this.keyFunction, false);
+    document.removeEventListener("click", this.mouseFunction, false);
   }
+
+  mouseFunction = (event) => {};
 
   keyFunction = (event) => {
     if (event.keyCode === 46) {
@@ -46,14 +49,6 @@ class App extends Component {
         componentRenderSwitch: false,
         silhouetteRenderSwitch: false,
       });
-    }
-  };
-
-  handleObjectSelection = (objBool) => {
-    if (this.state.isObjectSelected === objBool) {
-      return;
-    } else {
-      this.setState({ isObjectSelected: objBool });
     }
   };
 
@@ -243,8 +238,6 @@ class App extends Component {
               editingModeOn={this.state.editingModeOn}
               bgColor={this.state.bgColor}
               onHandleColorChangeComplete={this.handleColorChangeComplete}
-              onHandleObjectSelection={this.handleObjectSelection}
-              isObjectSelected={this.state.isObjectSelected}
             ></MainDesign>
           </Route>
         </Switch>

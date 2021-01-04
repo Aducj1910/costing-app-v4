@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import { Col, Container, Row, Button } from "react-bootstrap";
 import Popup from "reactjs-popup";
-import Canvas from "./canvas";
 import Fabric_Canvas_My from "./fabricCanvas";
 import NavBar from "./navBar";
 import ToolBar from "./toolBar";
 
 class MainDesign extends Component {
   state = {};
+
   render() {
     return (
       <div>
@@ -29,10 +29,9 @@ class MainDesign extends Component {
                   this.props.onHandleColorChangeComplete
                 }
                 bgColor={this.props.bgColor}
-                isObjectSelected={this.props.isObjectSelected}
               ></ToolBar>
             </Col>
-            <Col className="ml-2">
+            <Col className="ml-3">
               {/* <Canvas
                 currentComp={this.props.currentComp}
                 componentRenderSwitch={this.props.componentRenderSwitch}
@@ -48,8 +47,6 @@ class MainDesign extends Component {
                 colorRenderSwitch={this.props.colorRenderSwitch}
                 currentPatternComp={this.props.currentPatternComp}
                 deleteActiveObject={this.props.deleteActiveObject}
-                bgColor={this.props.bgColor}
-                onHandleObjectSelection={this.props.onHandleObjectSelection}
               ></Fabric_Canvas_My>
             </Col>
             <Col ml="2">
