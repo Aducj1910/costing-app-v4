@@ -7,6 +7,15 @@ import SilhouettesDropdown from "./silhouettesDropdown";
 
 class ToolBar extends Component {
   state = {};
+
+  getEditButtonDisplay = () => {
+    if (this.props.isObjectSelected) {
+      return "true";
+    } else {
+      return "none";
+    }
+  };
+
   render() {
     return (
       <ButtonGroup vertical>
@@ -29,6 +38,12 @@ class ToolBar extends Component {
           uploadedPatternFiles={this.props.uploadedPatternFiles}
           drawPattern={this.props.drawPattern}
         />
+        <Button
+          variant="danger"
+          style={{ display: this.getEditButtonDisplay() }}
+        >
+          Edit
+        </Button>
       </ButtonGroup>
     );
   }

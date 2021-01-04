@@ -29,9 +29,10 @@ class MainDesign extends Component {
                   this.props.onHandleColorChangeComplete
                 }
                 bgColor={this.props.bgColor}
+                isObjectSelected={this.props.isObjectSelected}
               ></ToolBar>
             </Col>
-            <Col>
+            <Col className="ml-2">
               {/* <Canvas
                 currentComp={this.props.currentComp}
                 componentRenderSwitch={this.props.componentRenderSwitch}
@@ -48,6 +49,7 @@ class MainDesign extends Component {
                 currentPatternComp={this.props.currentPatternComp}
                 deleteActiveObject={this.props.deleteActiveObject}
                 bgColor={this.props.bgColor}
+                onHandleObjectSelection={this.props.onHandleObjectSelection}
               ></Fabric_Canvas_My>
             </Col>
             <Col ml="2">

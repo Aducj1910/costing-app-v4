@@ -14,6 +14,7 @@ const Fabric_Canvas_My = (props) => {
     currentPatternComp,
     deleteActiveObject,
     bgColor,
+    onHandleObjectSelection,
   } = props;
 
   const [canvas, setCanvas] = useState("");
@@ -73,6 +74,10 @@ const Fabric_Canvas_My = (props) => {
     canvas.remove(canvas.getActiveObject());
   };
 
+  const editingObjectGetter = () => {
+    return canvas.getActiveObject();
+  };
+
   const addColor = () => {
     var colorImg = new fabric.Rect({
       width: 700,
@@ -110,13 +115,19 @@ const Fabric_Canvas_My = (props) => {
     removeObject();
   }
 
+  if (canvas.getActiveObject === null) {
+    onHandleObjectSelection(false);
+  } else if (canvas.getActiveObject !== null) {
+    onHandleObjectSelection(true);
+  }
+
   return (
     <div>
       <Row>
         <canvas id="canvas" />
       </Row>
       <Row>
-        <EditingCanvas />
+        <EditingCanvas editFun={editingObjectGetter} />
       </Row>
     </div>
   );
