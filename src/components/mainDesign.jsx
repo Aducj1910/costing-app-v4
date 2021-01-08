@@ -29,6 +29,7 @@ class MainDesign extends Component {
                   this.props.onHandleColorChangeComplete
                 }
                 bgColor={this.props.bgColor}
+                onHandleColorUpload={this.props.onHandleColorUpload}
               ></ToolBar>
             </Col>
             <Col className="ml-3">
@@ -44,7 +45,6 @@ class MainDesign extends Component {
                 currentSilhouette={this.props.currentSilhouette}
                 silhouetteRenderSwitch={this.props.silhouetteRenderSwitch}
                 patternRenderSwitch={this.props.patternRenderSwitch}
-                colorRenderSwitch={this.props.colorRenderSwitch}
                 currentPatternComp={this.props.currentPatternComp}
                 deleteActiveObject={this.props.deleteActiveObject}
               ></Fabric_Canvas_My>

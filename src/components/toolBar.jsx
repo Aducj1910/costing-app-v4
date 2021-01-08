@@ -14,6 +14,7 @@ class ToolBar extends Component {
         <EyeDropTool
           onHandleColorChangeComplete={this.props.onHandleColorChangeComplete}
           bgColor={this.props.bgColor}
+          onHandleColorUpload={this.props.onHandleColorUpload}
         />
         <ComponentDropdown
           label="Components"

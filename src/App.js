@@ -10,11 +10,10 @@ class App extends Component {
     uploadedSilhouetteMainFiles: null, //only locally used
     uploadedSilhouetteMaskFiles: null, //only locally used
     combinedSilhouettesArray: [],
-    currentPatternComp: null,
+    currentPatternComp: "abc",
     patternRenderSwitch: false,
     componentRenderSwitch: false,
     silhouetteRenderSwitch: false,
-    colorRenderSwitch: false,
     deleteActiveObject: false,
     editingModeOn: false,
     currentComp: null,
@@ -61,7 +60,6 @@ class App extends Component {
       patternRenderSwitch: false,
       componentRenderSwitch: false,
       silhouetteRenderSwitch: false,
-      colorRenderSwitch: false,
     });
   };
 
@@ -80,7 +78,6 @@ class App extends Component {
       componentRenderSwitch: true,
       silhouetteRenderSwitch: false,
       patternRenderSwitch: false,
-      colorRenderSwitch: false,
     });
   };
 
@@ -90,7 +87,6 @@ class App extends Component {
       silhouetteRenderSwitch: true,
       componentRenderSwitch: false,
       patternRenderSwitch: false,
-      colorRenderSwitch: false,
     });
   };
 
@@ -100,16 +96,6 @@ class App extends Component {
       patternRenderSwitch: true,
       silhouetteRenderSwitch: false,
       componentRenderSwitch: false,
-      colorRenderSwitch: false,
-    });
-  };
-
-  drawColor = () => {
-    this.setState({
-      colorRenderSwitch: true,
-      silhouetteRenderSwitch: false,
-      componentRenderSwitch: false,
-      patternRenderSwitch: false,
     });
   };
 
@@ -121,12 +107,25 @@ class App extends Component {
     this.setState({ uploadedSilhouetteMaskFiles: event.target.files[0] });
   };
 
+  handleColorUpload = () => {
+    var hiddenColorCanvas = document.createElement("canvas");
+    hiddenColorCanvas.width = 550;
+    hiddenColorCanvas.height = 500;
+
+    var ctx = hiddenColorCanvas.getContext("2d");
+    ctx.fillStyle = this.state.bgColor;
+    ctx.fillRect(0, 0, 500, 500);
+
+    let colorSrc = hiddenColorCanvas.toDataURL();
+    this.drawPattern(colorSrc);
+  };
+
   handleColorChangeComplete = (color) => {
-    this.setState({ bgColor: color.hex, colorRenderSwitch: true });
+    this.setState({ bgColor: color.hex });
   };
 
   handleSilhouettesCombine = () => {
-    if (this.state.buttonProcessing[0] == 0) {
+    if (this.state.buttonProcessing[0] === 0) {
       let imageFileMain = this.state.uploadedSilhouetteMainFiles;
       var reader = new FileReader();
       reader.readAsDataURL(imageFileMain);
@@ -143,7 +142,7 @@ class App extends Component {
         this.setState({ uploadedSilhouetteMaskFiles: imageFileMask });
       }.bind(this);
       this.setState({ buttonProcessing: [1, "outline-success", "Done"] });
-    } else if (this.state.buttonProcessing[0] == 1) {
+    } else if (this.state.buttonProcessing[0] === 1) {
       let newLocalArrayofSilhouettes = [
         this.state.uploadedSilhouetteMainFiles,
         this.state.uploadedSilhouetteMaskFiles,
@@ -152,7 +151,11 @@ class App extends Component {
       arr.push(newLocalArrayofSilhouettes);
       this.setState({
         combinedSilhouettesArray: arr,
-        buttonProcessing: [-1, "outline-success", "Done"],
+        buttonProcessing: [2, "outline-success", "Done"],
+      });
+    } else if (this.state.buttonProcessing[0] === 2) {
+      this.setState({
+        buttonProcessing: [-1, "outline-danger", "You can close now"],
       });
     }
   };
@@ -233,11 +236,11 @@ class App extends Component {
               currentSilhouette={this.state.currentSilhouette}
               currentPatternComp={this.state.currentPatternComp}
               patternRenderSwitch={this.state.patternRenderSwitch}
-              colorRenderSwitch={this.state.colorRenderSwitch}
               deleteActiveObject={this.state.deleteActiveObject}
               editingModeOn={this.state.editingModeOn}
               bgColor={this.state.bgColor}
               onHandleColorChangeComplete={this.handleColorChangeComplete}
+              onHandleColorUpload={this.handleColorUpload}
             ></MainDesign>
           </Route>
         </Switch>

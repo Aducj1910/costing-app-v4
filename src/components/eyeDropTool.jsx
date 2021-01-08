@@ -7,7 +7,7 @@ const EyeDropTool = (props) => {
   const [show, setShow] = useState(false);
   const target = useRef(null);
 
-  const { onHandleColorChangeComplete, bgColor } = props;
+  const { onHandleColorChangeComplete, bgColor, onHandleColorUpload } = props;
 
   return (
     <>
@@ -25,11 +25,15 @@ const EyeDropTool = (props) => {
               borderRadius: 3,
               ...props.style,
             }}
+            className="row justify-content-center align-self-center"
           >
             <ChromePicker
               color={bgColor}
               onChangeComplete={onHandleColorChangeComplete}
             />
+            <Button variant="dark" onClick={() => onHandleColorUpload()}>
+              Double <br /> Click to <br /> Upload
+            </Button>
           </div>
         )}
       </Overlay>

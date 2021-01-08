@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { fabric } from "fabric";
 import { Row } from "react-bootstrap";
 import EditingCanvas from "./editingCanvas";
@@ -11,11 +11,12 @@ const Fabric_Canvas_My = (props) => {
     silhouetteRenderSwitch,
     componentRenderSwitch,
     patternRenderSwitch,
-    colorRenderSwitch,
     currentPatternComp,
     deleteActiveObject,
     bgColor,
   } = props;
+
+  var editButtonRef = useRef(null);
 
   const [canvas, setCanvas] = useState("");
   useEffect(() => {
@@ -26,13 +27,14 @@ const Fabric_Canvas_My = (props) => {
     new fabric.Canvas("canvas", {
       height: 500,
       width: 700,
+      // backgroundColor: "red",
     });
 
   let comp = new Image();
   var comp_ = new fabric.Image(comp);
 
-  let patternImg = new Image();
-  var patternImg_ = new fabric.Image(patternImg);
+  // let patternImg = new Image();
+  // var patternImg_ = new fabric.Image(patternImg);
 
   let main = new Image();
   let mask = new Image();
@@ -43,21 +45,43 @@ const Fabric_Canvas_My = (props) => {
   var silhouettesGroup = new fabric.Group();
   var patternsGroup = new fabric.Group();
 
+  var localEditComp;
+
   //Object renditions
   const addComponent = () => {
     comp.src = currentComp;
-    comp_ = new fabric.Image(comp, { left: 100, top: 15 }); //left, top are used to indicate the inital render position of the object
+    comp_ = new fabric.Image(comp); //left, top are used to indicate the inital render position of the object
     componentsGroup.addWithUpdate(comp_);
 
     canvas.on("selection:created", function (options) {
-      document.getElementById("editButton").disabled = false;
+      // editButtonRef.current.disabled = false;
+      editButtonRef.current.style.visibility = "visible";
     });
 
     canvas.on("selection:cleared", function (options) {
-      document.getElementById("editButton").disabled = true;
+      // editButtonRef.current.variant = true;
+      editButtonRef.current.style.visibility = "hidden";
     });
 
     canvas.add(comp_);
+  };
+
+  const getEditedObjectSrc = (objSrc) => {
+    addEditedObject(objSrc);
+  };
+
+  //removes selected object and adds the edited object in its place
+  const addEditedObject = (localSrc) => {
+    //getting position of the original object
+
+    let editedCompImage = new Image();
+    editedCompImage.src = localSrc;
+    let editedObjectToRender = new fabric.Image(editedCompImage, {
+      top: localEditComp.top + localEditComp.height / 2,
+      left: localEditComp.left + localEditComp.width / 2,
+    });
+    canvas.remove(localEditComp);
+    canvas.add(editedObjectToRender);
   };
 
   const addSilhouette = () => {
@@ -73,8 +97,10 @@ const Fabric_Canvas_My = (props) => {
   };
 
   const addPattern = () => {
+    var patternImg = new Image();
     patternImg.src = currentPatternComp;
-    patternImg_ = new fabric.Image(patternImg);
+    console.log(patternImg.src);
+    let patternImg_ = new fabric.Image(patternImg);
 
     canvas.setBackgroundImage(patternImg_);
   };
@@ -84,24 +110,27 @@ const Fabric_Canvas_My = (props) => {
   };
 
   const editingObjectGetter = () => {
+    localEditComp = canvas.getActiveObject();
     return canvas.getActiveObject();
   };
 
-  const addColor = () => {
-    var colorImg = new fabric.Rect({
-      width: 700,
-      height: 500,
-      fill: bgColor,
-    });
+  // const addColor = () => {
+  //   var hiddenColorCanvas = document.createElement("canvas");
+  //   hiddenColorCanvas.width = 700;
+  //   hiddenColorCanvas.height = 500;
 
-    colorImg.cloneAsImage(
-      (function () {
-        return function (clone) {
-          canvas.setBackgroundImage(clone);
-        };
-      })()
-    );
-  };
+  //   var ctx = hiddenColorCanvas.getContext("2d");
+  //   ctx.fillStyle = bgColor;
+  //   ctx.fillRect(0, 0, 700, 500);
+
+  //   let colorBgImage = new Image();
+  //   let ctxSrc = canvas.toDataURL();
+  //   colorBgImage.src = ctxSrc;
+  //   colorBgImage.onload = function () {
+  //     var colorBgImage_ = new fabric.Image(colorBgImage);
+  //     canvas.setBackgroundImage(colorBgImage_);
+  //   };
+  // };
 
   if (silhouetteRenderSwitch) {
     addSilhouette();
@@ -115,10 +144,9 @@ const Fabric_Canvas_My = (props) => {
     addPattern();
   }
 
-  if (colorRenderSwitch) {
-    addColor();
-    //create pattern image of that type
-  }
+  // if (colorRenderSwitch) {
+  //   addColor();
+  // }
 
   if (deleteActiveObject && canvas.getActiveObject() != null) {
     removeObject();
@@ -129,16 +157,12 @@ const Fabric_Canvas_My = (props) => {
       <Row>
         <canvas id="canvas" />
       </Row>
-
-      <Row xs={4} className="justify-content-md-center">
-        {" "}
-        {/* Have to add this button in this file because of bug in fabric.js */}
-        <Button variant="danger" id="editButton" disabled={true}>
-          Edit
-        </Button>
-      </Row>
       <Row>
-        <EditingCanvas editFun={editingObjectGetter} />
+        <EditingCanvas
+          editFun={editingObjectGetter}
+          forwardedRef={editButtonRef}
+          setEditedObjectSrc={getEditedObjectSrc}
+        />
       </Row>
     </div>
   );
