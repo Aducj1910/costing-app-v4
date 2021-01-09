@@ -1,6 +1,12 @@
 import React, { Component, useState, useEffect, useRef } from "react";
 import { fabric } from "fabric";
-import { Row, Button } from "react-bootstrap";
+import { Row, Button, Col } from "react-bootstrap";
+import {
+  ChromePicker,
+  HuePicker,
+  PhotoshopPicker,
+  SliderPicker,
+} from "react-color";
 
 const EditingCanvas = (props) => {
   const { editFun, isEditingModeOn, forwardedRef, setEditedObjectSrc } = props;
@@ -20,6 +26,14 @@ const EditingCanvas = (props) => {
   var objectToRender;
   var localSrc;
   var k = 0;
+  var selectedColor;
+  var bgColor;
+
+  const handleChangeComplete = (color) => {
+    selectedColor = color;
+    bgColor = color.hex;
+    newColor();
+  };
 
   const RenderEditableObject = () => {
     objectToRender = editFun();
@@ -35,6 +49,16 @@ const EditingCanvas = (props) => {
     var ctx = canvas.getContext("2d");
     ctx.drawImage(img, 0, 0);
 
+    let red = 255,
+      green = 255,
+      blue = 255;
+
+    if (selectedColor !== null) {
+      red = selectedColor.rgb.r;
+      green = selectedColor.rgb.g;
+      blue = selectedColor.rgb.b;
+    }
+
     var imgDataInit = ctx.getImageData(0, 0, canvas.width, canvas.height);
     let imgd = imgDataInit.data;
 
@@ -44,9 +68,9 @@ const EditingCanvas = (props) => {
       let b = imgd[i + 2];
 
       if (r === 255 && g === 255 && b === 255) {
-        imgd[i] = 255;
-        imgd[i + 1] = 255;
-        imgd[i + 2] = 0;
+        imgd[i] = selectedColor.rgb.r;
+        imgd[i + 1] = selectedColor.rgb.g;
+        imgd[i + 2] = selectedColor.rgb.b;
       }
     }
     ctx.putImageData(imgDataInit, 0, 0);
@@ -58,16 +82,14 @@ const EditingCanvas = (props) => {
     var locImg = new Image();
     locImg.src = originalSource;
 
-    locImg.onload = function () {
-      localSrc = getBase64Image(locImg);
-      locImg.src = localSrc;
+    localSrc = getBase64Image(locImg);
+    locImg.src = localSrc;
 
-      let newImageToRender = new fabric.Image(locImg, {
-        top: 20,
-        left: 30,
-      }); //make sure the position is same later on
-      canvas2.add(newImageToRender);
-    };
+    let newImageToRender = new fabric.Image(locImg, {
+      top: 20,
+      left: 30,
+    }); //make sure the position is same later on
+    canvas2.add(newImageToRender);
   };
 
   const exportComponent = () => {
@@ -75,18 +97,18 @@ const EditingCanvas = (props) => {
   };
 
   return (
-    <div>
+    <div ref={forwardedRef} style={{ visibility: "hidden" }}>
       <Row xs={4} className="justify-content-md-center">
         {" "}
         {/* Have to add this button in this file because of bug in fabric.js */}
-        <Button
-          className="btn-danger"
-          ref={forwardedRef}
-          style={{ visibility: "hidden" }}
-          onClick={() => RenderEditableObject()}
-        >
+        <Button className="btn-danger" onClick={() => RenderEditableObject()}>
           Edit
         </Button>
+        <HuePicker
+          color={bgColor}
+          onChangeComplete={handleChangeComplete}
+          className="ml-3"
+        />
       </Row>
       <Row>
         <button onClick={() => newColor()}>Check</button>
