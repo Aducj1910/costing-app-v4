@@ -20,6 +20,7 @@ class App extends Component {
     currentSilhouette: null,
     bgColor: "#ffffff",
     buttonProcessing: [0, "outline-warning", "Process"],
+    compDict: {},
   }; //importedComponentFiles for firestore database
 
   // constructor(props) {
@@ -72,7 +73,7 @@ class App extends Component {
     });
   };
 
-  drawComponent = (componentComp) => {
+  drawComponent = (componentComp, componentName) => {
     this.setState({
       currentComp: componentComp,
       componentRenderSwitch: true,
@@ -241,6 +242,7 @@ class App extends Component {
               bgColor={this.state.bgColor}
               onHandleColorChangeComplete={this.handleColorChangeComplete}
               onHandleColorUpload={this.handleColorUpload}
+              compDict={this.state.compDict}
             ></MainDesign>
           </Route>
         </Switch>

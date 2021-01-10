@@ -47,6 +47,7 @@ class MainDesign extends Component {
                 patternRenderSwitch={this.props.patternRenderSwitch}
                 currentPatternComp={this.props.currentPatternComp}
                 deleteActiveObject={this.props.deleteActiveObject}
+                compDict={this.props.compDict}
               ></Fabric_Canvas_My>
             </Col>
             <Col ml="2">

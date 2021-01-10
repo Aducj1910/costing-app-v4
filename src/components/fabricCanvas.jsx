@@ -13,6 +13,7 @@ const Fabric_Canvas_My = (props) => {
     patternRenderSwitch,
     currentPatternComp,
     deleteActiveObject,
+    compDict,
     bgColor,
   } = props;
 
@@ -114,24 +115,6 @@ const Fabric_Canvas_My = (props) => {
     return canvas.getActiveObject();
   };
 
-  // const addColor = () => {
-  //   var hiddenColorCanvas = document.createElement("canvas");
-  //   hiddenColorCanvas.width = 700;
-  //   hiddenColorCanvas.height = 500;
-
-  //   var ctx = hiddenColorCanvas.getContext("2d");
-  //   ctx.fillStyle = bgColor;
-  //   ctx.fillRect(0, 0, 700, 500);
-
-  //   let colorBgImage = new Image();
-  //   let ctxSrc = canvas.toDataURL();
-  //   colorBgImage.src = ctxSrc;
-  //   colorBgImage.onload = function () {
-  //     var colorBgImage_ = new fabric.Image(colorBgImage);
-  //     canvas.setBackgroundImage(colorBgImage_);
-  //   };
-  // };
-
   if (silhouetteRenderSwitch) {
     addSilhouette();
   }
@@ -162,6 +145,7 @@ const Fabric_Canvas_My = (props) => {
           editFun={editingObjectGetter}
           forwardedRef={editButtonRef}
           setEditedObjectSrc={getEditedObjectSrc}
+          compDict={compDict}
         />
       </Row>
     </div>

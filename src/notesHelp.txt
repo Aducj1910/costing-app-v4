@@ -5,5 +5,8 @@ eg. const myFunction = () =>{
 }
 
 <MyComponent myFun = {myFunction}>
-
 instead of using {myFunction()} in the last line
+
+________
+
+2. You can't compare objects directly, you have to use JSON.stringify on it before.

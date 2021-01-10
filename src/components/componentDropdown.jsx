@@ -26,7 +26,7 @@ const ComponentDropdown = (props) => {
         {componentFiles.map((comp) => (
           <Dropdown.Item
             key={comp.size}
-            onClick={() => drawComponent(comp.comp)}
+            onClick={() => drawComponent(comp.comp, comp.name)}
           >
             {comp.name}
           </Dropdown.Item>
