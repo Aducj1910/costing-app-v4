@@ -11,15 +11,15 @@ const NavBar = () => {
           <Navbar.Brand href="/">Costing</Navbar.Brand>
         </LinkContainer>
         <Nav className="mr-auto">
-          <Nav.Link as={Link} to="/">
-            Home
+          <Nav.Link as={Link} to="/add-component">
+            Add Component
           </Nav.Link>
           {/* <Nav.Link href="#features">Features</Nav.Link> */}
-          <Nav.Link as={Link} to="/components">
-            Component
+          <Nav.Link as={Link} to="/admin-bom">
+            BOM
           </Nav.Link>
-          <Nav.Link as={Link} to="/importcomponent">
-            New Component
+          <Nav.Link as={Link} to="/admin-cmt">
+            CMT
           </Nav.Link>
         </Nav>
       </Navbar>

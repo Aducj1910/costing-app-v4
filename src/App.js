@@ -1,5 +1,8 @@
 import React, { Component, createRef } from "react";
 import { Route, Switch } from "react-router-dom";
+import AddComponentPage from "./components/addComponentPage";
+import AdminPageBOM from "./components/adminPageBOM";
+import AdminPageCMT from "./components/adminPageCMT";
 import MainDesign from "./components/mainDesign";
 import { db, auth } from "./services/firebase";
 
@@ -244,6 +247,15 @@ class App extends Component {
               onHandleColorUpload={this.handleColorUpload}
               compDict={this.state.compDict}
             ></MainDesign>
+          </Route>
+          <Route path="/admin-bom" exact>
+            <AdminPageBOM />
+          </Route>
+          <Route path="/admin-cmt" exact>
+            <AdminPageCMT />
+          </Route>
+          <Route path="/add-component" exact>
+            <AddComponentPage />
           </Route>
         </Switch>
       </div>

@@ -10,3 +10,7 @@ instead of using {myFunction()} in the last line
 ________
 
 2. You can't compare objects directly, you have to use JSON.stringify on it before.
+
+________
+
+3. Use defaultValue instead of value parameter in <input type="text">
