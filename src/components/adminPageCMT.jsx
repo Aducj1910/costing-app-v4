@@ -20,10 +20,7 @@ class AdminPageCMT extends Component {
       <tr key={item.id}>
         <td>{item.id}</td>
         <td>
-          <input type="text" defaultValue={item.name} />
-        </td>
-        <td>
-          <input type="text" defaultValue={item.type} />
+          <input type="text" defaultValue={item.activity} />
         </td>
         <td>
           <input type="text" defaultValue={item.unit} />
@@ -53,14 +50,12 @@ class AdminPageCMT extends Component {
 
   pushNewData = () => {
     let addedId = document.getElementById("customRowId").value;
-    let addedName = document.getElementById("customRowName").value;
-    let addedType = document.getElementById("customRowType").value;
+    let addedActivity = document.getElementById("customRowActivity").value;
     let addedUnit = document.getElementById("customRowUnit").value;
     let addedRate = document.getElementById("customRowRate").value;
 
     db.collection("CMT").add({
-      name: addedName,
-      type: addedType,
+      activity: addedActivity,
       unit: addedUnit,
       rate: addedRate,
       id: addedId,
@@ -71,7 +66,7 @@ class AdminPageCMT extends Component {
 
   deleteCustomRowData = () => {
     document.getElementById("customRowId").value = "";
-    document.getElementById("customRowName").value = "";
+    document.getElementById("customRowActivity").value = "";
     document.getElementById("customRowType").value = "";
     document.getElementById("customRowUnit").value = "";
     document.getElementById("customRowRate").value = "";
@@ -85,10 +80,7 @@ class AdminPageCMT extends Component {
           Id: <input id="customRowId" type="text" style={{ width: 50 }} />{" "}
         </td>
         <td>
-          Name: <input id="customRowName" />
-        </td>
-        <td>
-          Type: <input id="customRowType" type="text" />
+          Activity: <input id="customRowActivity" />
         </td>
         <td>
           Unit: <input id="customRowUnit" type="text" />
@@ -124,8 +116,7 @@ class AdminPageCMT extends Component {
           <thead>
             <tr>
               <th>Id</th>
-              <th>Item name</th>
-              <th>Item type</th>
+              <th>Activity</th>
               <th>Unit</th>
               <th>Rate (in Rs)</th>
               <th>
