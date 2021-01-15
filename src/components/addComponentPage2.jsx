@@ -6,7 +6,12 @@ import AdminGetItemType from "./adminGetItemType";
 import { db, auth } from "../services/firebase";
 
 class AddComponentPage extends Component {
-  state = { itemCount: 0, BOMItemsArray: [], itemTypeObject: {} };
+  state = {
+    itemCount: 0,
+    BOMItemsArray: [],
+    itemTypeObject: {},
+    imgComp: null,
+  };
 
   componentDidMount = () => {
     db.collection("BOM")
@@ -30,12 +35,38 @@ class AddComponentPage extends Component {
     this.setState({ itemTypeObject });
   };
 
+  getComponentImage = (event) => {
+    let file = event.target.files[0];
+    var reader = new FileReader();
+    reader.addEventListener(
+      "load",
+      function () {
+        this.setState({ imgComp: reader.result });
+      }.bind(this),
+      false
+    );
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+  };
+
   onUpload = () => {
+    let typeObjList = [];
     for (var i = 0; i < this.state.itemCount; i++) {
       let itemName = document.getElementById("type" + i).value;
       let itemType = this.state.itemTypeObject[i];
       let itemConsumption = document.getElementById("consumption" + i).value;
+      let typeObj = {
+        name: itemName,
+        type: itemType,
+        consumption: itemConsumption,
+      };
+      typeObjList.push(typeObj);
     }
+    db.collection("components").add({
+      comp: this.state.imgComp,
+      config: typeObjList,
+    });
   };
 
   onNewItemAdd = () => {
@@ -52,7 +83,7 @@ class AddComponentPage extends Component {
               rawArray={this.state.BOMItemsArray}
               inRow={i}
               onItemTypeSelected={this.onItemTypeSelected}
-            />{" "}
+            />
             <input type="text" id={"type" + i} className="ml-2" />
           </Row>
         </td>
@@ -70,7 +101,7 @@ class AddComponentPage extends Component {
           <NavBar />
         </header>
         <Row className="m-2">
-          <input type="file" />
+          <input type="file" onChange={this.getComponentImage} />
         </Row>
         <Row className="m-2">
           <Table>

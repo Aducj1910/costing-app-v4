@@ -1,6 +1,6 @@
 import React, { Component, createRef } from "react";
 import { Route, Switch } from "react-router-dom";
-import AddComponentPage from "./components/addComponentPage2";
+import AddComponentPage from "./components/addComponentPage";
 import AdminPageBOM from "./components/adminPageBOM";
 import AdminPageCMT from "./components/adminPageCMT";
 import MainDesign from "./components/mainDesign";

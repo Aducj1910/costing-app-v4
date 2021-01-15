@@ -1,20 +1,24 @@
-import React, { Component } from "react";
-import { Col, DropdownButton, Row, Table } from "react-bootstrap";
+import React, { Component, useState } from "react";
+import {
+  Col,
+  Row,
+  Table,
+  Button,
+  Dropdown,
+  DropdownButton,
+} from "react-bootstrap";
 import NavBar from "./navBar";
+import { FcPlus } from "react-icons/fc";
+import AdminGetItemType from "./adminGetItemType";
 import { db, auth } from "../services/firebase";
-import DropdownItem from "react-bootstrap/esm/DropdownItem";
-import { forEach, isNumber } from "lodash";
-import { isNumeric } from "jquery";
-import { MdCheckCircle } from "react-icons/md";
-
-// TODO: Change the "Fabric: " heading to "Items: ", add a dropdown in order to select the type of
-// thing you are chosing (Eg. button, fabric, etc.).
-// Then render the dropdown for the name of the item filtered by type.
-// Change get & setFabriCount functions.
-// Remove instances of variables/labels/functions/etc. using "fabric" in their name and replace with item.
 
 class AddComponentPage extends Component {
-  state = { selectedFabric: "None", BOMItemsArray: [], fabricCount: 0 };
+  state = {
+    itemCount: 0,
+    BOMItemsArray: [],
+    itemTypeObject: {},
+    imgComp: null,
+  };
 
   componentDidMount = () => {
     db.collection("BOM")
@@ -32,45 +36,101 @@ class AddComponentPage extends Component {
       .catch((error) => console.log(error));
   };
 
-  createCanvas = () => {
-    var canvas = document.createElement("canvas");
-    canvas.width = 500;
-    canvas.height = 500;
-
-    var ctx = canvas.getContext("2d");
+  onItemTypeSelected = (rowId, selectedType) => {
+    let itemTypeObject = this.state.itemTypeObject;
+    itemTypeObject[rowId] = selectedType;
+    this.setState({ itemTypeObject });
   };
 
-  setFabricCount = () => {
-    let localNum = document.getElementById("inputFabricCount").value;
-    if (isNumeric(localNum)) {
-      let num = parseInt(localNum);
-      num = Math.round(num);
-      this.setState({ fabricCount: num });
+  getComponentImage = (event) => {
+    let file = event.target.files[0];
+    var reader = new FileReader();
+    reader.addEventListener(
+      "load",
+      function () {
+        this.setState({ imgComp: reader.result });
+      }.bind(this),
+      false
+    );
+    if (file) {
+      reader.readAsDataURL(file);
     }
   };
 
-  getFabricDropdown = () => {
-    let pvtFabricDropdownArray = [];
-    this.state.BOMItemsArray.forEach((element) => {
-      if (element.type === "Fabric") {
-        pvtFabricDropdownArray.push({ name: element.name, id: element.id });
+  onUpload = () => {
+    let typeObjList = [];
+    for (var i = 0; i < this.state.itemCount; i++) {
+      let itemName = document.getElementById("name-lbl" + i).innerHTML;
+      let itemType = this.state.itemTypeObject[i];
+      let itemConsumption = document.getElementById("consumption" + i).value;
+      let typeObj = {
+        name: itemName,
+        type: itemType,
+        consumption: itemConsumption,
+      };
+      typeObjList.push(typeObj);
+    }
+    db.collection("components").add({
+      comp: this.state.imgComp,
+      config: typeObjList,
+    });
+  };
+
+  onNewItemAdd = () => {
+    let count = this.state.itemCount + 1;
+    this.setState({ itemCount: count });
+  };
+
+  RenderItemNameChoice = (index) => {
+    let type = this.state.itemTypeObject[index];
+    let localRawArray = this.state.BOMItemsArray;
+    let nameArray = [];
+    localRawArray.forEach((element) => {
+      if (element.type === type) {
+        nameArray.push(element);
       }
     });
-    return [...Array(this.state.fabricCount)].map((e, i) => (
-      <Row className="m-2">
-        <Row>
-          <DropdownButton title="Choose Fabric">
-            {pvtFabricDropdownArray.map((item) => (
-              <DropdownItem key={item.id}>{item.name}</DropdownItem>
-            ))}
-          </DropdownButton>
-          <label className="ml-2">{this.state.selectedFabric}</label>
-          <label className="ml-5">
-            <b> Consumption: </b>
-          </label>
-          <input className="ml-1" type="text" />
-        </Row>
-      </Row>
+
+    const itemClicked = (element) => {
+      document.getElementById("name-lbl" + index).innerHTML = element.name;
+    };
+
+    return (
+      <React.Fragment>
+        <DropdownButton id={"name" + index} className="ml-2">
+          {nameArray.map((element) => (
+            <Dropdown.Item
+              onClick={() => itemClicked(element)}
+              key={element.id}
+            >
+              {element.name}
+            </Dropdown.Item>
+          ))}
+        </DropdownButton>
+        <h6 className="ml-2 mt-2" id={"name-lbl" + index}>
+          Check
+        </h6>
+      </React.Fragment>
+    );
+  };
+
+  renderNewItemInput = () => {
+    return [...Array(this.state.itemCount)].map((e, i) => (
+      <tr key={i}>
+        <td>
+          <Row>
+            <AdminGetItemType
+              rawArray={this.state.BOMItemsArray}
+              inRow={i}
+              onItemTypeSelected={this.onItemTypeSelected}
+            />
+            {this.RenderItemNameChoice(i)}
+          </Row>
+        </td>
+        <td>
+          <input type="text" id={"consumption" + i} />
+        </td>
+      </tr>
     ));
   };
 
@@ -80,45 +140,29 @@ class AddComponentPage extends Component {
         <header>
           <NavBar />
         </header>
-        <Col>
-          <Row>
-            <input type="file" className="m-2" />
-          </Row>
-          <Row>
-            <Table>
-              <tr>
-                <th>
-                  Fabric:{" "}
-                  <input
-                    type="text"
-                    style={{ width: 40 }}
-                    id="inputFabricCount"
-                  />
-                  <button
-                    style={{ border: "none", background: "none" }}
-                    className="ml-2"
-                    onClick={() => this.setFabricCount()}
-                  >
-                    <MdCheckCircle />
-                  </button>
-                </th>
-                <th>
-                  CMT Activity: <input type="text" style={{ width: 40 }} />{" "}
-                  <button
-                    style={{ border: "none", background: "none" }}
-                    className="ml-2"
-                    onClick={() => this.setFabricCount()}
-                  >
-                    <MdCheckCircle />
-                  </button>
-                </th>
-              </tr>
-              <tr>
-                <td>{this.getFabricDropdown()}</td>
-              </tr>
-            </Table>
-          </Row>
-        </Col>
+        <Row className="m-2">
+          <input type="file" onChange={this.getComponentImage} />
+        </Row>
+        <Row className="m-2">
+          <Table>
+            <tr>
+              <th>
+                Item
+                <button
+                  onClick={() => this.onNewItemAdd()}
+                  style={{ border: "none", background: "none" }}
+                >
+                  <FcPlus />
+                </button>
+              </th>
+              <th>Consumption</th>
+            </tr>
+            {this.renderNewItemInput()}
+          </Table>
+          <Button variant="success" onClick={() => this.onUpload()}>
+            Upload
+          </Button>
+        </Row>
       </div>
     );
   }
