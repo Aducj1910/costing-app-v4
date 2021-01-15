@@ -1,5 +1,12 @@
-import React, { Component } from "react";
-import { Col, Row, Table, Button } from "react-bootstrap";
+import React, { Component, useState } from "react";
+import {
+  Col,
+  Row,
+  Table,
+  Button,
+  Dropdown,
+  DropdownButton,
+} from "react-bootstrap";
 import NavBar from "./navBar";
 import { FcPlus } from "react-icons/fc";
 import AdminGetItemType from "./adminGetItemType";
@@ -53,7 +60,7 @@ class AddComponentPage extends Component {
   onUpload = () => {
     let typeObjList = [];
     for (var i = 0; i < this.state.itemCount; i++) {
-      let itemName = document.getElementById("type" + i).value;
+      let itemName = document.getElementById("name-lbl" + i).innerHTML;
       let itemType = this.state.itemTypeObject[i];
       let itemConsumption = document.getElementById("consumption" + i).value;
       let typeObj = {
@@ -74,6 +81,39 @@ class AddComponentPage extends Component {
     this.setState({ itemCount: count });
   };
 
+  RenderItemNameChoice = (index) => {
+    let type = this.state.itemTypeObject[index];
+    let localRawArray = this.state.BOMItemsArray;
+    let nameArray = [];
+    localRawArray.forEach((element) => {
+      if (element.type === type) {
+        nameArray.push(element);
+      }
+    });
+
+    const itemClicked = (element) => {
+      document.getElementById("name-lbl" + index).innerHTML = element.name;
+    };
+
+    return (
+      <React.Fragment>
+        <DropdownButton id={"name" + index} className="ml-2">
+          {nameArray.map((element) => (
+            <Dropdown.Item
+              onClick={() => itemClicked(element)}
+              key={element.id}
+            >
+              {element.name}
+            </Dropdown.Item>
+          ))}
+        </DropdownButton>
+        <h6 className="ml-2 mt-2" id={"name-lbl" + index}>
+          Check
+        </h6>
+      </React.Fragment>
+    );
+  };
+
   renderNewItemInput = () => {
     return [...Array(this.state.itemCount)].map((e, i) => (
       <tr key={i}>
@@ -84,7 +124,7 @@ class AddComponentPage extends Component {
               inRow={i}
               onItemTypeSelected={this.onItemTypeSelected}
             />
-            <input type="text" id={"type" + i} className="ml-2" />
+            {this.RenderItemNameChoice(i)}
           </Row>
         </td>
         <td>
