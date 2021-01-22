@@ -88,6 +88,7 @@ class AddComponentPage extends Component {
     //   };
     //   typeObjList.push(typeObj);
     // }
+
     db.collection("components").add({
       name: document.getElementById("compName").value,
       comp: this.state.imgComp,
