@@ -1,15 +1,17 @@
 import React, { Component, createRef } from "react";
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, withRouter } from "react-router-dom";
 import AddComponentPage from "./components/addComponentPage";
 import AdminPageBOM from "./components/adminPageBOM";
 import AdminPageCMT from "./components/adminPageCMT";
 import MainDesign from "./components/mainDesign";
 import { db, auth } from "./services/firebase";
+//import component data from firebase db
 
 class App extends Component {
   state = {
     uploadedComponentFiles: [],
     uploadedPatternFiles: [],
+    importedComponentFiles: [],
     uploadedSilhouetteMainFiles: null, //only locally used
     uploadedSilhouetteMaskFiles: null, //only locally used
     combinedSilhouettesArray: [],
@@ -36,13 +38,29 @@ class App extends Component {
   componentDidMount() {
     document.addEventListener("keydown", this.keyFunction, false);
     document.addEventListener("click", this.mouseFunction, false);
+    db.collection("components")
+      .get()
+      .then((snapshot) => {
+        let pvtImpCompArray = [];
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          pvtImpCompArray.push(data);
+        });
+        // console.log(pvtImpCompArray);
+        // console.log(pvtImpCompArray[0].config[0].name);
+        this.setState({
+          importedComponentFiles: pvtImpCompArray,
+        });
+      })
+      .catch((error) => console.log(error));
   }
+
   componentWillUnmount() {
     document.removeEventListener("keydown", this.keyFunction, false);
     document.removeEventListener("click", this.mouseFunction, false);
   }
 
-  mouseFunction = (event) => {};
+  // mouseFunction = (event) => {};
 
   keyFunction = (event) => {
     if (event.keyCode === 46) {
@@ -211,53 +229,51 @@ class App extends Component {
   render() {
     return (
       <div>
-        <Switch>
-          <Route path="/" exact>
-            <MainDesign
-              onHandleUploadedComponentFiles={this.handleUploadedComponentFiles}
-              onHandleUploadedPatternFiles={this.handleUploadedPatternFiles}
-              onHandleUploadedSilhouetteMainFiles={
-                this.handleUploadedSilhouetteMainFiles
-              }
-              onHandleUploadedSilhouetteMaskFiles={
-                this.handleUploadedSilhouetteMaskFiles
-              }
-              combinedSilhouettesArray={this.state.combinedSilhouettesArray}
-              onHandleSilhouettesCombine={this.handleSilhouettesCombine}
-              onComponentFilesUploadData={this.componentFilesUploadData}
-              onPatternFilesUploadData={this.patternFilesUploadData}
-              uploadedComponentFiles={this.state.uploadedComponentFiles}
-              uploadedPatternFiles={this.state.uploadedPatternFiles}
-              importedComponentFiles={this.state.importedComponentFiles}
-              uploadedSilhouetteFiles={this.state.uploadedSilhouetteFiles}
-              currentComp={this.state.currentComp}
-              componentRenderSwitch={this.state.componentRenderSwitch}
-              drawComponent={this.drawComponent}
-              drawSilhouettes={this.drawSilhouettes}
-              drawPattern={this.drawPattern}
-              buttonProcessing={this.state.buttonProcessing}
-              silhouetteRenderSwitch={this.state.silhouetteRenderSwitch}
-              currentSilhouette={this.state.currentSilhouette}
-              currentPatternComp={this.state.currentPatternComp}
-              patternRenderSwitch={this.state.patternRenderSwitch}
-              deleteActiveObject={this.state.deleteActiveObject}
-              editingModeOn={this.state.editingModeOn}
-              bgColor={this.state.bgColor}
-              onHandleColorChangeComplete={this.handleColorChangeComplete}
-              onHandleColorUpload={this.handleColorUpload}
-              compDict={this.state.compDict}
-            ></MainDesign>
-          </Route>
-          <Route path="/admin-bom" exact>
-            <AdminPageBOM />
-          </Route>
-          <Route path="/admin-cmt" exact>
-            <AdminPageCMT />
-          </Route>
-          <Route path="/add-component" exact>
-            <AddComponentPage />
-          </Route>
-        </Switch>
+        <Route exact path="/">
+          <MainDesign
+            onHandleUploadedComponentFiles={this.handleUploadedComponentFiles}
+            onHandleUploadedPatternFiles={this.handleUploadedPatternFiles}
+            onHandleUploadedSilhouetteMainFiles={
+              this.handleUploadedSilhouetteMainFiles
+            }
+            onHandleUploadedSilhouetteMaskFiles={
+              this.handleUploadedSilhouetteMaskFiles
+            }
+            combinedSilhouettesArray={this.state.combinedSilhouettesArray}
+            onHandleSilhouettesCombine={this.handleSilhouettesCombine}
+            onComponentFilesUploadData={this.componentFilesUploadData}
+            onPatternFilesUploadData={this.patternFilesUploadData}
+            uploadedComponentFiles={this.state.uploadedComponentFiles}
+            uploadedPatternFiles={this.state.uploadedPatternFiles}
+            importedComponentFiles={this.state.importedComponentFiles}
+            uploadedSilhouetteFiles={this.state.uploadedSilhouetteFiles}
+            currentComp={this.state.currentComp}
+            componentRenderSwitch={this.state.componentRenderSwitch}
+            drawComponent={this.drawComponent}
+            drawSilhouettes={this.drawSilhouettes}
+            drawPattern={this.drawPattern}
+            buttonProcessing={this.state.buttonProcessing}
+            silhouetteRenderSwitch={this.state.silhouetteRenderSwitch}
+            currentSilhouette={this.state.currentSilhouette}
+            currentPatternComp={this.state.currentPatternComp}
+            patternRenderSwitch={this.state.patternRenderSwitch}
+            deleteActiveObject={this.state.deleteActiveObject}
+            editingModeOn={this.state.editingModeOn}
+            bgColor={this.state.bgColor}
+            onHandleColorChangeComplete={this.handleColorChangeComplete}
+            onHandleColorUpload={this.handleColorUpload}
+            compDict={this.state.compDict}
+          ></MainDesign>
+        </Route>
+        <Route path="/admin-bom">
+          <AdminPageBOM />
+        </Route>
+        <Route path="/admin-cmt">
+          <AdminPageCMT />
+        </Route>
+        <Route path="/add-component">
+          <AddComponentPage />
+        </Route>
       </div>
     );
   }

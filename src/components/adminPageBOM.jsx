@@ -15,7 +15,6 @@ class AdminPageBOM extends Component {
   getBOMTableContent = () => {
     //BOM TABLE CONTENT RENDER
     this.handleBOMItemsImport();
-
     return this.state.BOMItemsArray.map((item) => (
       <tr key={item.id}>
         <td>{item.id}</td>

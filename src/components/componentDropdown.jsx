@@ -4,8 +4,13 @@ import { FaTshirt } from "react-icons/fa";
 
 //map each <Dropdown.Item> to an element in array later on
 const ComponentDropdown = (props) => {
-  const { label, uploadedComponentFiles, drawComponent } = props;
-  var componentFiles = uploadedComponentFiles;
+  const {
+    label,
+    uploadedComponentFiles,
+    importedComponentFiles,
+    drawComponent,
+  } = props;
+  var componentFiles = importedComponentFiles;
 
   return (
     <React.Fragment>
@@ -23,15 +28,14 @@ const ComponentDropdown = (props) => {
         id="bg-vertical-dropdown-1"
         variant="flat"
       >
-        {componentFiles.map((comp) => (
+        {importedComponentFiles.map((comp) => (
           <Dropdown.Item
-            key={comp.size}
             onClick={() => drawComponent(comp.comp, comp.name)}
+            key={comp.name}
           >
             {comp.name}
           </Dropdown.Item>
         ))}
-        {/* <Dropdown.Item eventKey="2">Dropdown link</Dropdown.Item> */}
       </DropdownButton>
     </React.Fragment>
   );

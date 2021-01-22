@@ -14,3 +14,8 @@ ________
 ________
 
 3. Use defaultValue instead of value parameter in <input type="text">
+________
+
+4. For background hint in input type text, use <input type="text" placeholder="Enter name..." />, placeholder holds text for 
+any hint.
+________

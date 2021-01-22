@@ -10,11 +10,13 @@ import {
 import NavBar from "./navBar";
 import { FcPlus } from "react-icons/fc";
 import AdminGetItemType from "./adminGetItemType";
+import { AiTwotoneDelete } from "react-icons/ai";
 import { db, auth } from "../services/firebase";
 
 class AddComponentPage extends Component {
   state = {
     itemCount: 0,
+    itemCountArray: [],
     BOMItemsArray: [],
     itemTypeObject: {},
     imgComp: null,
@@ -58,27 +60,58 @@ class AddComponentPage extends Component {
   };
 
   onUpload = () => {
+    let itemCountArray = this.state.itemCountArray;
     let typeObjList = [];
-    for (var i = 0; i < this.state.itemCount; i++) {
-      let itemName = document.getElementById("name-lbl" + i).innerHTML;
-      let itemType = this.state.itemTypeObject[i];
-      let itemConsumption = document.getElementById("consumption" + i).value;
+
+    itemCountArray.forEach((element) => {
+      console.log(element);
+      let itemName = document.getElementById("name-lbl" + element).innerHTML;
+      let itemType = this.state.itemTypeObject[element];
+      let itemConsumption = document.getElementById("consumption" + element)
+        .value;
       let typeObj = {
         name: itemName,
         type: itemType,
         consumption: itemConsumption,
       };
       typeObjList.push(typeObj);
-    }
+    });
+
+    // for (var i = 0; i < this.state.itemCount; i++) {
+    //   let itemName = document.getElementById("name-lbl" + i).innerHTML;
+    //   let itemType = this.state.itemTypeObject[i];
+    //   let itemConsumption = document.getElementById("consumption" + i).value;
+    //   let typeObj = {
+    //     name: itemName,
+    //     type: itemType,
+    //     consumption: itemConsumption,
+    //   };
+    //   typeObjList.push(typeObj);
+    // }
     db.collection("components").add({
+      name: document.getElementById("compName").value,
       comp: this.state.imgComp,
       config: typeObjList,
     });
   };
 
   onNewItemAdd = () => {
-    let count = this.state.itemCount + 1;
-    this.setState({ itemCount: count });
+    let itemCount = this.state.itemCount + 1;
+    let itemCountArray = this.state.itemCountArray;
+    itemCountArray.push(itemCount - 1);
+    this.setState({ itemCount, itemCountArray });
+  };
+
+  deleteItem = (index) => {
+    let rowToDelete = document.getElementById("tr" + index);
+    let itemCountArray = this.state.itemCountArray;
+    var i = itemCountArray.indexOf(index);
+    if (index !== -1) {
+      itemCountArray.splice(i, 1);
+    }
+    rowToDelete.remove();
+    this.setState({ itemCountArray });
+    console.log(itemCountArray);
   };
 
   RenderItemNameChoice = (index) => {
@@ -108,7 +141,7 @@ class AddComponentPage extends Component {
           ))}
         </DropdownButton>
         <h6 className="ml-2 mt-2" id={"name-lbl" + index}>
-          Check
+          ---
         </h6>
       </React.Fragment>
     );
@@ -116,7 +149,7 @@ class AddComponentPage extends Component {
 
   renderNewItemInput = () => {
     return [...Array(this.state.itemCount)].map((e, i) => (
-      <tr key={i}>
+      <tr id={"tr" + i} key={i}>
         <td>
           <Row>
             <AdminGetItemType
@@ -130,6 +163,15 @@ class AddComponentPage extends Component {
         <td>
           <input type="text" id={"consumption" + i} />
         </td>
+        <td>
+          <button
+            style={{ background: "none", border: "none" }}
+            id={"delete" + i}
+            onClick={() => this.deleteItem(i)}
+          >
+            <AiTwotoneDelete />
+          </button>
+        </td>
       </tr>
     ));
   };
@@ -142,6 +184,7 @@ class AddComponentPage extends Component {
         </header>
         <Row className="m-2">
           <input type="file" onChange={this.getComponentImage} />
+          <input type="text" placeholder="Enter name..." id="compName" />
         </Row>
         <Row className="m-2">
           <Table>

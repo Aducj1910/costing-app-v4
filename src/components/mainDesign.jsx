@@ -4,15 +4,25 @@ import Popup from "reactjs-popup";
 import Fabric_Canvas_My from "./fabricCanvas";
 import NavBar from "./navBar";
 import ToolBar from "./toolBar";
+import { withRouter } from "react-router-dom";
 
 class MainDesign extends Component {
-  state = {};
+  state = { display: "yes" };
 
   render() {
+    // console.log(this.props.location.pathname);
+    // if (this.props.location.pathname === "/" && this.state.display !== "yes") {
+    //   this.setState({ display: "yes" });
+    // } else if (
+    //   this.props.location.pathname === "/add-component" &&
+    //   this.state.display !== "none"
+    // ) {
+    //   this.setState({ display: "none" });
+    // }
     return (
-      <div>
+      <div style={{ display: this.state.display }}>
         <header>
-          <NavBar></NavBar>
+          <NavBar onCanvasScreen={true}></NavBar>
         </header>
         <Container fluid>
           <Row>
@@ -20,6 +30,7 @@ class MainDesign extends Component {
               <ToolBar
                 uploadedComponentFiles={this.props.uploadedComponentFiles}
                 uploadedPatternFiles={this.props.uploadedPatternFiles}
+                importedComponentFiles={this.props.importedComponentFiles}
                 hiddenRef={this.props.hiddenRef}
                 drawComponent={this.props.drawComponent}
                 combinedSilhouettesArray={this.props.combinedSilhouettesArray}
@@ -147,4 +158,4 @@ class MainDesign extends Component {
   }
 }
 
-export default MainDesign;
+export default withRouter(MainDesign);

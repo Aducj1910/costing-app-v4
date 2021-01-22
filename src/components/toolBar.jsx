@@ -19,6 +19,7 @@ class ToolBar extends Component {
         <ComponentDropdown
           label="Components"
           uploadedComponentFiles={this.props.uploadedComponentFiles}
+          importedComponentFiles={this.props.importedComponentFiles}
           drawComponent={this.props.drawComponent}
         ></ComponentDropdown>
         <SilhouettesDropdown
