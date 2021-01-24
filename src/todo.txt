@@ -5,3 +5,9 @@ Functionality for when component is deleted (updating BOM)
 Pattern upload functionality
 
 Silhouette upload functionality
+
+Delete functionality for BOM
+
+Delete functionality for CMT
+
+Component manager with delete functionality
