@@ -11,6 +11,7 @@ const ComponentDropdown = (props) => {
     drawComponent,
   } = props;
   var componentFiles = importedComponentFiles;
+  // console.log(componentFiles);
 
   return (
     <React.Fragment>
@@ -30,7 +31,7 @@ const ComponentDropdown = (props) => {
       >
         {importedComponentFiles.map((comp) => (
           <Dropdown.Item
-            onClick={() => drawComponent(comp.comp, comp.name)}
+            onClick={() => drawComponent(comp.comp, comp.name, comp.config)}
             key={comp.name}
           >
             {comp.name}

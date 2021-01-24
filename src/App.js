@@ -5,7 +5,6 @@ import AdminPageBOM from "./components/adminPageBOM";
 import AdminPageCMT from "./components/adminPageCMT";
 import MainDesign from "./components/mainDesign";
 import { db, auth } from "./services/firebase";
-//import component data from firebase db
 
 class App extends Component {
   state = {
@@ -26,6 +25,8 @@ class App extends Component {
     bgColor: "#ffffff",
     buttonProcessing: [0, "outline-warning", "Process"],
     compDict: {},
+    BOM: [],
+    unitBOM: [],
   }; //importedComponentFiles for firestore database
 
   // constructor(props) {
@@ -51,6 +52,18 @@ class App extends Component {
         this.setState({
           importedComponentFiles: pvtImpCompArray,
         });
+      })
+      .catch((error) => console.log(error));
+
+    db.collection("BOM")
+      .get()
+      .then((snapshot) => {
+        let pvtUnitBOMArray = [];
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          pvtUnitBOMArray.push(data);
+        });
+        this.setState({ unitBOM: pvtUnitBOMArray });
       })
       .catch((error) => console.log(error));
   }
@@ -94,13 +107,51 @@ class App extends Component {
     });
   };
 
-  drawComponent = (componentComp, componentName) => {
+  drawComponent = (componentComp, componentName, componentConfig) => {
     this.setState({
       currentComp: componentComp,
       componentRenderSwitch: true,
       silhouetteRenderSwitch: false,
       patternRenderSwitch: false,
     });
+
+    let unitBOM = this.state.unitBOM;
+    //adding to local BOM
+    componentConfig.forEach((element) => {
+      let unit = "none";
+
+      unitBOM.forEach((BOMElement) => {
+        if (element.type == BOMElement.type) {
+          unit = BOMElement.unit;
+        }
+      });
+
+      let addNew = true;
+      let BOM = this.state.BOM;
+      BOM.forEach((BOMElement) => {
+        if (element.name == BOMElement.name) {
+          BOMElement.consumption =
+            parseFloat(BOMElement.consumption) +
+            parseFloat(element.consumption);
+          addNew = false;
+        }
+      });
+      this.setState({ BOM });
+
+      if (addNew) {
+        console.log("add");
+        let selectedItemBOM = {
+          name: element.name,
+          unit: unit,
+          type: element.type,
+          consumption: parseFloat(element.consumption),
+        };
+
+        BOM.push(selectedItemBOM);
+        this.setState({ BOM });
+      }
+    });
+    console.log(this.state.BOM);
   };
 
   drawSilhouettes = (silht) => {

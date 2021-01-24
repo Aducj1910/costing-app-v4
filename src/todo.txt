@@ -1,0 +1,7 @@
+Add CMT
+
+Functionality for when component is deleted (updating BOM)
+
+Pattern upload functionality
+
+Silhouette upload functionality
