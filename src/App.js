@@ -151,7 +151,6 @@ class App extends Component {
         this.setState({ BOM });
       }
     });
-    console.log(this.state.BOM);
   };
 
   drawSilhouettes = (silht) => {
