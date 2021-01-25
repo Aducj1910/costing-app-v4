@@ -57,7 +57,7 @@ class AdminPageBOM extends Component {
     let addedUnit = document.getElementById("customRowUnit").value;
     let addedRate = document.getElementById("customRowRate").value;
 
-    db.collection("BOM").add({
+    db.collection("BOM").doc(addedId).set({
       name: addedName,
       type: addedType,
       unit: addedUnit,

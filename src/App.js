@@ -26,7 +26,7 @@ class App extends Component {
     buttonProcessing: [0, "outline-warning", "Process"],
     compDict: {},
     BOM: [],
-    unitBOM: [],
+    propertyBOM: [],
   }; //importedComponentFiles for firestore database
 
   // constructor(props) {
@@ -58,12 +58,12 @@ class App extends Component {
     db.collection("BOM")
       .get()
       .then((snapshot) => {
-        let pvtUnitBOMArray = [];
+        let pvtpropertyBOMArray = [];
         snapshot.forEach((doc) => {
           const data = doc.data();
-          pvtUnitBOMArray.push(data);
+          pvtpropertyBOMArray.push(data);
         });
-        this.setState({ unitBOM: pvtUnitBOMArray });
+        this.setState({ propertyBOM: pvtpropertyBOMArray });
       })
       .catch((error) => console.log(error));
   }
@@ -115,14 +115,21 @@ class App extends Component {
       patternRenderSwitch: false,
     });
 
-    let unitBOM = this.state.unitBOM;
+    //just to test
+    // db.collection("BOM").doc("8NWgDJR8D48nVXwcNHRs").delete();
+
+    let propertyBOM = this.state.propertyBOM;
     //adding to local BOM
     componentConfig.forEach((element) => {
       let unit = "none";
+      let rate = -1;
+      let id = -1;
 
-      unitBOM.forEach((BOMElement) => {
+      propertyBOM.forEach((BOMElement) => {
         if (element.type == BOMElement.type) {
           unit = BOMElement.unit;
+          rate = BOMElement.rate;
+          id = BOMElement.id;
         }
       });
 
@@ -139,18 +146,20 @@ class App extends Component {
       this.setState({ BOM });
 
       if (addNew) {
-        console.log("add");
         let selectedItemBOM = {
           name: element.name,
-          unit: unit,
           type: element.type,
+          id: id,
+          unit: unit,
           consumption: parseFloat(element.consumption),
+          rate: parseFloat(rate),
         };
 
         BOM.push(selectedItemBOM);
         this.setState({ BOM });
       }
     });
+    console.log(this.state.BOM);
   };
 
   drawSilhouettes = (silht) => {

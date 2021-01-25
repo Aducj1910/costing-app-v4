@@ -77,18 +77,6 @@ class AddComponentPage extends Component {
       typeObjList.push(typeObj);
     });
 
-    // for (var i = 0; i < this.state.itemCount; i++) {
-    //   let itemName = document.getElementById("name-lbl" + i).innerHTML;
-    //   let itemType = this.state.itemTypeObject[i];
-    //   let itemConsumption = document.getElementById("consumption" + i).value;
-    //   let typeObj = {
-    //     name: itemName,
-    //     type: itemType,
-    //     consumption: itemConsumption,
-    //   };
-    //   typeObjList.push(typeObj);
-    // }
-
     db.collection("components").add({
       name: document.getElementById("compName").value,
       comp: this.state.imgComp,
@@ -185,6 +173,13 @@ class AddComponentPage extends Component {
         </header>
         <Row className="m-2">
           <input type="file" onChange={this.getComponentImage} />
+          <input //ADD FUNCTIONALITY TO THIS FEATURE OF COMPONENT ID LATER ON
+            className="mr-2" //IMP
+            type="text" //IMP
+            placeholder="ID" //IMP
+            id="compId" //IM[]
+            style={{ width: 40 }} //IMP
+          />
           <input type="text" placeholder="Enter name..." id="compName" />
         </Row>
         <Row className="m-2">

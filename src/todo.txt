@@ -1,6 +1,6 @@
-Add CMT
+Custom id for components
 
-Functionality for when component is deleted (updating BOM)
+Add CMT
 
 Pattern upload functionality
 
