@@ -14,7 +14,6 @@ class AdminPageBOM extends Component {
 
   getBOMTableContent = () => {
     //BOM TABLE CONTENT RENDER
-    this.handleBOMItemsImport();
     return this.state.BOMItemsArray.map((item) => (
       <tr key={item.id}>
         <td>{item.id}</td>
@@ -34,7 +33,12 @@ class AdminPageBOM extends Component {
     ));
   };
 
+  componentDidMount = () => {
+    this.handleBOMItemsImport();
+  };
+
   handleBOMItemsImport = () => {
+    console.log("Called");
     db.collection("BOM")
       .get()
       .then((snapshot) => {

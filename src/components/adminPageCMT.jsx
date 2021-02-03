@@ -14,8 +14,6 @@ class AdminPageCMT extends Component {
 
   getCMTTableContent = () => {
     //CMT TABLE CONTENT RENDER
-    this.handleCMTItemsImport();
-
     return this.state.CMTItemsArray.map((item) => (
       <tr key={item.id}>
         <td>{item.id}</td>
@@ -30,6 +28,10 @@ class AdminPageCMT extends Component {
         </td>
       </tr>
     ));
+  };
+
+  componentDidMount = () => {
+    this.handleCMTItemsImport();
   };
 
   handleCMTItemsImport = () => {
