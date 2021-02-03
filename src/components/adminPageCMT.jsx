@@ -3,13 +3,46 @@ import NavBar from "./navBar";
 import { db, auth } from "../services/firebase";
 import { Table } from "react-bootstrap";
 import { BsPlusCircleFill } from "react-icons/bs";
-import { AiTwotoneDelete } from "react-icons/ai";
+import { AiTwotoneDelete, AiTwotoneEdit } from "react-icons/ai";
 import { FcCheckmark } from "react-icons/fc";
 
 class AdminPageCMT extends Component {
   state = {
     CMTItemsArray: [],
     customRowAddBool: false,
+    currentIdEditing: -1,
+  };
+
+  deleteCMTItem = (itemToDelId) => {
+    console.log(itemToDelId);
+    db.collection("CMT")
+      .doc(itemToDelId)
+      .then(
+        function () {
+          this.handleCMTItemsImport();
+        }.bind(this)
+      )
+      .delete()
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
+  editCMTItem = (itemToEditId) => {
+    if (this.state.currentIdEditing == -1) {
+      this.setState({ currentIdEditing: itemToEditId });
+    } else if (this.state.currentIdEditing == itemToEditId) {
+      let activityToPush = document.getElementById(itemToEditId + "activity")
+        .value;
+      let unitToPush = document.getElementById(itemToEditId + "unit").value;
+      let rateToPush = document.getElementById(itemToEditId + "rate").value;
+      db.collection("CMT").doc(itemToEditId).update({
+        activity: activityToPush,
+        unit: unitToPush,
+        rate: rateToPush,
+      });
+      this.setState({ currentIdEditing: -1 });
+    }
   };
 
   getCMTTableContent = () => {
@@ -18,17 +51,34 @@ class AdminPageCMT extends Component {
       <tr key={item.id}>
         <td>{item.id}</td>
         <td>
-          <input type="text" defaultValue={item.activity} />
+          <input
+            id={item.id + "activity"}
+            type="text"
+            defaultValue={item.activity}
+          />
         </td>
         <td>
-          <input type="text" defaultValue={item.unit} />
+          <input id={item.id + "unit"} type="text" defaultValue={item.unit} />
         </td>
         <td>
-          <input type="text" defaultValue={item.rate} />
+          <input id={item.id + "rate"} type="text" defaultValue={item.rate} />
         </td>
         <td>
-          <button style={{ background: "none", border: "none" }}>
+          <button
+            style={{ background: "none", border: "none" }}
+            onClick={() => this.deleteBOMItem(item.id)}
+          >
             <AiTwotoneDelete />
+          </button>
+          <button
+            style={{ background: "none", border: "none" }}
+            onClick={() => this.editCMTItem(item.id)}
+          >
+            {this.state.currentIdEditing == item.id ? (
+              <FcCheckmark />
+            ) : (
+              <AiTwotoneEdit />
+            )}
           </button>
         </td>
       </tr>

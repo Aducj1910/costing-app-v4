@@ -3,13 +3,47 @@ import NavBar from "./navBar";
 import { db, auth } from "../services/firebase";
 import { Table } from "react-bootstrap";
 import { BsPlusCircleFill } from "react-icons/bs";
-import { AiTwotoneDelete } from "react-icons/ai";
+import { AiTwotoneDelete, AiFillEdit, AiTwotoneEdit } from "react-icons/ai";
 import { FcCheckmark } from "react-icons/fc";
 
 class AdminPageBOM extends Component {
   state = {
     BOMItemsArray: [],
     customRowAddBool: false,
+    currentIdEditing: -1,
+  };
+
+  deleteBOMItem = (itemToDelId) => {
+    console.log(itemToDelId);
+    db.collection("BOM")
+      .doc(itemToDelId)
+      .delete()
+      .then(
+        function () {
+          this.handleBOMItemsImport();
+        }.bind(this)
+      )
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
+  editBOMItem = (itemToEditId) => {
+    if (this.state.currentIdEditing == -1) {
+      this.setState({ currentIdEditing: itemToEditId });
+    } else if (this.state.currentIdEditing == itemToEditId) {
+      let nameToPush = document.getElementById(itemToEditId + "name").value;
+      let typeToPush = document.getElementById(itemToEditId + "type").value;
+      let unitToPush = document.getElementById(itemToEditId + "unit").value;
+      let rateToPush = document.getElementById(itemToEditId + "rate").value;
+      db.collection("BOM").doc(itemToEditId).update({
+        name: nameToPush,
+        type: typeToPush,
+        unit: unitToPush,
+        rate: rateToPush,
+      });
+      this.setState({ currentIdEditing: -1 });
+    }
   };
 
   getBOMTableContent = () => {
@@ -18,20 +52,33 @@ class AdminPageBOM extends Component {
       <tr key={item.id}>
         <td>{item.id}</td>
         <td>
-          <input type="text" defaultValue={item.name} />
+          <input id={item.id + "name"} type="text" defaultValue={item.name} />
         </td>
         <td>
-          <input type="text" defaultValue={item.type} />
+          <input id={item.id + "type"} type="text" defaultValue={item.type} />
         </td>
         <td>
-          <input type="text" defaultValue={item.unit} />
+          <input id={item.id + "unit"} type="text" defaultValue={item.unit} />
         </td>
         <td>
-          <input type="text" defaultValue={item.rate} />
+          <input id={item.id + "rate"} type="text" defaultValue={item.rate} />
         </td>
         <td>
-          <button style={{ background: "none", border: "none" }}>
+          <button
+            style={{ background: "none", border: "none" }}
+            onClick={() => this.deleteBOMItem(item.id)}
+          >
             <AiTwotoneDelete />
+          </button>
+          <button
+            style={{ background: "none", border: "none" }}
+            onClick={() => this.editBOMItem(item.id)}
+          >
+            {this.state.currentIdEditing == item.id ? (
+              <FcCheckmark />
+            ) : (
+              <AiTwotoneEdit />
+            )}
           </button>
         </td>
       </tr>
@@ -43,6 +90,7 @@ class AdminPageBOM extends Component {
   };
 
   handleBOMItemsImport = () => {
+    console.log("Called");
     db.collection("BOM")
       .get()
       .then((snapshot) => {
