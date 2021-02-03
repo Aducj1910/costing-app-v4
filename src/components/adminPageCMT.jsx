@@ -26,6 +26,11 @@ class AdminPageCMT extends Component {
         <td>
           <input type="text" defaultValue={item.rate} />
         </td>
+        <td>
+          <button style={{ background: "none", border: "none" }}>
+            <AiTwotoneDelete />
+          </button>
+        </td>
       </tr>
     ));
   };

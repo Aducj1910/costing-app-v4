@@ -29,6 +29,11 @@ class AdminPageBOM extends Component {
         <td>
           <input type="text" defaultValue={item.rate} />
         </td>
+        <td>
+          <button style={{ background: "none", border: "none" }}>
+            <AiTwotoneDelete />
+          </button>
+        </td>
       </tr>
     ));
   };
@@ -38,7 +43,6 @@ class AdminPageBOM extends Component {
   };
 
   handleBOMItemsImport = () => {
-    console.log("Called");
     db.collection("BOM")
       .get()
       .then((snapshot) => {
