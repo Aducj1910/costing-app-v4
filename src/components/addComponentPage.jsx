@@ -12,6 +12,7 @@ import { FcPlus } from "react-icons/fc";
 import AdminGetItemType from "./adminGetItemType";
 import { AiTwotoneDelete } from "react-icons/ai";
 import { db, auth } from "../services/firebase";
+import tick from "../gifs/tick.gif";
 
 class AddComponentPage extends Component {
   state = {
@@ -20,6 +21,8 @@ class AddComponentPage extends Component {
     BOMItemsArray: [],
     itemTypeObject: {},
     imgComp: null,
+    componentId: null,
+    toRenderTick: false,
   };
 
   componentDidMount = () => {
@@ -77,11 +80,21 @@ class AddComponentPage extends Component {
       typeObjList.push(typeObj);
     });
 
-    db.collection("components").add({
-      name: document.getElementById("compName").value,
-      comp: this.state.imgComp,
-      config: typeObjList,
-    });
+    db.collection("components")
+      .doc(this.state.componentId)
+      .set({
+        name: document.getElementById("compName").value,
+        comp: this.state.imgComp,
+        config: typeObjList,
+      });
+
+    this.setState({ toRenderTick: true });
+    setTimeout(
+      function () {
+        this.setState({ toRenderTick: false });
+      }.bind(this),
+      3000
+    );
   };
 
   onNewItemAdd = () => {
@@ -136,6 +149,10 @@ class AddComponentPage extends Component {
     );
   };
 
+  getId = (event) => {
+    this.setState({ componentId: event.target.value });
+  };
+
   renderNewItemInput = () => {
     return [...Array(this.state.itemCount)].map((e, i) => (
       <tr id={"tr" + i} key={i}>
@@ -165,6 +182,14 @@ class AddComponentPage extends Component {
     ));
   };
 
+  getTickRender = () => {
+    if (this.state.toRenderTick) {
+      return <img src={tick} width={40} height={40} />;
+    } else {
+      return null;
+    }
+  };
+
   render() {
     return (
       <div>
@@ -177,8 +202,9 @@ class AddComponentPage extends Component {
             className="mr-2" //IMP
             type="text" //IMP
             placeholder="ID" //IMP
-            id="compId" //IM[]
+            id="compId" //IMP
             style={{ width: 40 }} //IMP
+            onChange={this.getId}
           />
           <input type="text" placeholder="Enter name..." id="compName" />
         </Row>
@@ -201,6 +227,7 @@ class AddComponentPage extends Component {
           <Button variant="success" onClick={() => this.onUpload()}>
             Upload
           </Button>
+          {this.getTickRender()}
         </Row>
       </div>
     );
