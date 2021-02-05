@@ -16,10 +16,14 @@ import tick from "../gifs/tick.gif";
 
 class AddComponentPage extends Component {
   state = {
-    itemCount: 0,
-    itemCountArray: [],
+    BOMitemCount: 0,
+    BOMitemCountArray: [],
+    CMTitemCount: 0,
+    CMTitemCountArray: [],
     BOMItemsArray: [],
+    CMTItemsArray: [],
     itemTypeObject: {},
+    CMTTitleObject: {},
     imgComp: null,
     componentId: null,
     toRenderTick: false,
@@ -39,6 +43,17 @@ class AddComponentPage extends Component {
         });
       })
       .catch((error) => console.log(error));
+
+    db.collection("CMT")
+      .get()
+      .then((snapshot) => {
+        let pvtCMTItemsArray = [];
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          pvtCMTItemsArray.push(data);
+        });
+        this.setState({ CMTItemsArray: pvtCMTItemsArray });
+      });
   };
 
   onItemTypeSelected = (rowId, selectedType) => {
@@ -63,11 +78,12 @@ class AddComponentPage extends Component {
   };
 
   onUpload = () => {
-    let itemCountArray = this.state.itemCountArray;
+    let BOMitemCountArray = this.state.BOMitemCountArray;
+    let CMTitemCountArray = this.state.CMTitemCountArray;
     let typeObjList = [];
+    let CMTtypeObjList = [];
 
-    itemCountArray.forEach((element) => {
-      console.log(element);
+    BOMitemCountArray.forEach((element) => {
       let itemName = document.getElementById("name-lbl" + element).innerHTML;
       let itemType = this.state.itemTypeObject[element];
       let itemConsumption = document.getElementById("consumption" + element)
@@ -80,47 +96,68 @@ class AddComponentPage extends Component {
       typeObjList.push(typeObj);
     });
 
+    CMTitemCountArray.forEach((element) => {
+      console.log(element);
+      let itemActivity = this.state.CMTTitleObject[element];
+      let itemConsumption = document.getElementById("CMT-consumption" + element)
+        .value;
+      let CMTTypeObj = {
+        activity: itemActivity,
+        consumption: itemConsumption,
+      };
+      CMTtypeObjList.push(CMTTypeObj);
+    });
+
     db.collection("components")
       .doc(this.state.componentId)
       .set({
         name: document.getElementById("compName").value,
         comp: this.state.imgComp,
         config: typeObjList,
+        CMT_config: CMTtypeObjList,
       });
 
     this.setState({ toRenderTick: true });
     setTimeout(
       function () {
         this.setState({ toRenderTick: false });
+        window.location.reload();
       }.bind(this),
       3000
     );
   };
 
-  onNewItemAdd = () => {
-    let itemCount = this.state.itemCount + 1;
-    let itemCountArray = this.state.itemCountArray;
-    itemCountArray.push(itemCount - 1);
-    this.setState({ itemCount, itemCountArray });
+  onNewBOMItemAdd = () => {
+    let BOMitemCount = this.state.BOMitemCount + 1;
+    let BOMitemCountArray = this.state.BOMitemCountArray;
+    BOMitemCountArray.push(BOMitemCount - 1);
+    this.setState({ BOMitemCount, BOMitemCountArray });
+  };
+
+  onNewCMTItemAdd = () => {
+    let CMTitemCount = this.state.CMTitemCount + 1;
+    let CMTitemCountArray = this.state.CMTitemCountArray;
+    CMTitemCountArray.push(CMTitemCount - 1);
+    this.setState({ CMTitemCount, CMTitemCountArray });
   };
 
   deleteItem = (index) => {
     let rowToDelete = document.getElementById("tr" + index);
-    let itemCountArray = this.state.itemCountArray;
-    var i = itemCountArray.indexOf(index);
+    let BOMitemCountArray = this.state.BOMitemCountArray;
+    var i = BOMitemCountArray.indexOf(index);
     if (index !== -1) {
-      itemCountArray.splice(i, 1);
+      BOMitemCountArray.splice(i, 1);
     }
     rowToDelete.remove();
-    this.setState({ itemCountArray });
-    console.log(itemCountArray);
+    this.setState({ BOMitemCountArray });
+    console.log(BOMitemCountArray);
   };
 
-  RenderItemNameChoice = (index) => {
+  RenderBOMItemNameChoice = (index) => {
     let type = this.state.itemTypeObject[index];
-    let localRawArray = this.state.BOMItemsArray;
+    let localBOMRawArray = this.state.BOMItemsArray;
     let nameArray = [];
-    localRawArray.forEach((element) => {
+    localBOMRawArray.forEach((element) => {
       if (element.type === type) {
         nameArray.push(element);
       }
@@ -153,8 +190,44 @@ class AddComponentPage extends Component {
     this.setState({ componentId: event.target.value });
   };
 
-  renderNewItemInput = () => {
-    return [...Array(this.state.itemCount)].map((e, i) => (
+  getCMTTitle = (index, activityName) => {
+    let CMTTitleObject = this.state.CMTTitleObject;
+    CMTTitleObject[index] = activityName;
+    this.setState({ CMTTitleObject });
+  };
+
+  renderNewCMTItemInput = () => {
+    return [...Array(this.state.CMTitemCount)].map((e, i) => (
+      <tr id={"CMTtr" + i} key={i}>
+        <td>
+          <Row>
+            <DropdownButton
+              title={
+                this.state.CMTTitleObject[i]
+                  ? this.state.CMTTitleObject[i]
+                  : "Select"
+              }
+            >
+              {this.state.CMTItemsArray.map((item) => (
+                <Dropdown.Item
+                  onClick={() => this.getCMTTitle(i, item.activity)}
+                  key={item.id}
+                >
+                  {item.activity}
+                </Dropdown.Item>
+              ))}
+            </DropdownButton>
+          </Row>
+        </td>
+        <td>
+          <input id={"CMT-consumption" + i} type="text" />
+        </td>
+      </tr>
+    ));
+  };
+
+  renderNewBOMItemInput = () => {
+    return [...Array(this.state.BOMitemCount)].map((e, i) => (
       <tr id={"tr" + i} key={i}>
         <td>
           <Row>
@@ -163,7 +236,7 @@ class AddComponentPage extends Component {
               inRow={i}
               onItemTypeSelected={this.onItemTypeSelected}
             />
-            {this.RenderItemNameChoice(i)}
+            {this.RenderBOMItemNameChoice(i)}
           </Row>
         </td>
         <td>
@@ -211,10 +284,10 @@ class AddComponentPage extends Component {
         <Row className="m-2">
           <Table>
             <tr>
-              <th>
+              <th width={600}>
                 Item
                 <button
-                  onClick={() => this.onNewItemAdd()}
+                  onClick={() => this.onNewBOMItemAdd()}
                   style={{ border: "none", background: "none" }}
                 >
                   <FcPlus />
@@ -222,7 +295,24 @@ class AddComponentPage extends Component {
               </th>
               <th>Consumption</th>
             </tr>
-            {this.renderNewItemInput()}
+            {this.renderNewBOMItemInput()}
+          </Table>
+        </Row>
+        <Row className="m-2">
+          <Table>
+            <tr>
+              <th width={600}>
+                Process{" "}
+                <button
+                  style={{ border: "none", background: "none" }}
+                  onClick={() => this.onNewCMTItemAdd()}
+                >
+                  <FcPlus />
+                </button>
+              </th>
+              <th>Consumption</th>
+            </tr>
+            {this.renderNewCMTItemInput()}
           </Table>
           <Button variant="success" onClick={() => this.onUpload()}>
             Upload

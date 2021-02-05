@@ -122,6 +122,7 @@ class AdminPageBOM extends Component {
     });
 
     this.handleBOMItemsImport();
+    this.deleteCustomRowData();
   };
 
   deleteCustomRowData = () => {

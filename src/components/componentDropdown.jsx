@@ -31,7 +31,9 @@ const ComponentDropdown = (props) => {
       >
         {importedComponentFiles.map((comp) => (
           <Dropdown.Item
-            onClick={() => drawComponent(comp.comp, comp.name, comp.config)}
+            onClick={() =>
+              drawComponent(comp.comp, comp.config, comp.CMT_config)
+            }
             key={comp.name}
           >
             {comp.name}

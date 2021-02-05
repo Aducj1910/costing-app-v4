@@ -26,15 +26,11 @@ class App extends Component {
     buttonProcessing: [0, "outline-warning", "Process"],
     compDict: {},
     BOM: [],
+    CMT: [],
     propertyBOM: [],
-  }; //importedComponentFiles for firestore database
-
-  // constructor(props) {
-  //   super(props);
-
-  //   this.hiddenInputRef = React.createRef(null);
-  //   this.setState({ hiddenRef: this.hiddenInputRef });
-  // }
+    propertyCMT: [],
+    estimatedCost: 0,
+  };
 
   componentDidMount() {
     document.addEventListener("keydown", this.keyFunction, false);
@@ -47,11 +43,21 @@ class App extends Component {
           const data = doc.data();
           pvtImpCompArray.push(data);
         });
-        // console.log(pvtImpCompArray);
-        // console.log(pvtImpCompArray[0].config[0].name);
         this.setState({
           importedComponentFiles: pvtImpCompArray,
         });
+      })
+      .catch((error) => console.log(error));
+
+    db.collection("CMT")
+      .get()
+      .then((snapshot) => {
+        let pvtpropertyCMTArray = [];
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          pvtpropertyCMTArray.push(data);
+        });
+        this.setState({ propertyCMT: pvtpropertyCMTArray });
       })
       .catch((error) => console.log(error));
 
@@ -73,6 +79,10 @@ class App extends Component {
     document.removeEventListener("click", this.mouseFunction, false);
   }
 
+  componentDidUpdate = () => {
+    this.calculateCost();
+  };
+
   // mouseFunction = (event) => {};
 
   keyFunction = (event) => {
@@ -84,6 +94,22 @@ class App extends Component {
         silhouetteRenderSwitch: false,
       });
     }
+  };
+
+  calculateCost = () => {
+    //IN PROGRESS
+    //calculates cost to be displayed
+    let BOM = this.state.BOM;
+    let CMT = this.state.CMT;
+    let BOMCost = 0;
+    let CMTCost = 0;
+
+    BOM.forEach((element) => {
+      BOMCost = BOMCost + element.consumption * element.rate;
+    });
+    CMT.forEach((element) => {
+      CMTCost = CMTCost + element.consumption * element.rate;
+    });
   };
 
   handleUploadedComponentFiles = (event) => {
@@ -107,7 +133,7 @@ class App extends Component {
     });
   };
 
-  drawComponent = (componentComp, componentName, componentConfig) => {
+  drawComponent = (componentComp, componentConfig, componentCMTConfig) => {
     this.setState({
       currentComp: componentComp,
       componentRenderSwitch: true,
@@ -115,18 +141,55 @@ class App extends Component {
       patternRenderSwitch: false,
     });
 
-    //just to test
-    // db.collection("BOM").doc("8NWgDJR8D48nVXwcNHRs").delete();
-
     let propertyBOM = this.state.propertyBOM;
+    let propertyCMT = this.state.propertyCMT;
     //adding to local BOM
+
+    componentCMTConfig.forEach((element) => {
+      let unit = "none";
+      let rate = -1;
+      let id = -1;
+
+      propertyCMT.forEach((CMTElement) => {
+        if (element.activity == CMTElement.activity) {
+          unit = CMTElement.unit;
+          rate = CMTElement.rate;
+          id = CMTElement.id;
+        }
+      });
+
+      let addNew = true;
+      let CMT = this.state.CMT;
+      CMT.forEach((CMTElement) => {
+        if (element.activity == CMTElement.activity) {
+          CMTElement.consumption =
+            parseFloat(CMTElement.consumption) +
+            parseFloat(element.consumption);
+          addNew = false;
+        }
+      });
+      this.setState({ CMT });
+
+      if (addNew) {
+        let selectedItemCMT = {
+          activity: element.activity,
+          id: id,
+          unit: unit,
+          consumption: parseFloat(element.consumption),
+          rate: parseFloat(rate),
+        };
+        CMT.push(selectedItemCMT);
+        this.setState({ CMT });
+      }
+    });
+
     componentConfig.forEach((element) => {
       let unit = "none";
       let rate = -1;
       let id = -1;
 
       propertyBOM.forEach((BOMElement) => {
-        if (element.type == BOMElement.type) {
+        if (element.name == BOMElement.name) {
           unit = BOMElement.unit;
           rate = BOMElement.rate;
           id = BOMElement.id;
@@ -159,7 +222,6 @@ class App extends Component {
         this.setState({ BOM });
       }
     });
-    console.log(this.state.BOM);
   };
 
   drawSilhouettes = (silht) => {

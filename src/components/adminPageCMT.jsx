@@ -17,18 +17,19 @@ class AdminPageCMT extends Component {
     console.log(itemToDelId);
     db.collection("CMT")
       .doc(itemToDelId)
+      .delete()
       .then(
         function () {
           this.handleCMTItemsImport();
         }.bind(this)
       )
-      .delete()
       .catch(function (error) {
         console.log(error);
       });
   };
 
   editCMTItem = (itemToEditId) => {
+    console.log(itemToEditId);
     if (this.state.currentIdEditing == -1) {
       this.setState({ currentIdEditing: itemToEditId });
     } else if (this.state.currentIdEditing == itemToEditId) {
@@ -66,7 +67,7 @@ class AdminPageCMT extends Component {
         <td>
           <button
             style={{ background: "none", border: "none" }}
-            onClick={() => this.deleteBOMItem(item.id)}
+            onClick={() => this.deleteCMTItem(item.id)}
           >
             <AiTwotoneDelete />
           </button>
@@ -111,7 +112,7 @@ class AdminPageCMT extends Component {
     let addedUnit = document.getElementById("customRowUnit").value;
     let addedRate = document.getElementById("customRowRate").value;
 
-    db.collection("CMT").add({
+    db.collection("CMT").doc(addedId).set({
       activity: addedActivity,
       unit: addedUnit,
       rate: addedRate,
@@ -119,12 +120,12 @@ class AdminPageCMT extends Component {
     });
 
     this.handleCMTItemsImport();
+    this.deleteCustomRowData();
   };
 
   deleteCustomRowData = () => {
     document.getElementById("customRowId").value = "";
     document.getElementById("customRowActivity").value = "";
-    document.getElementById("customRowType").value = "";
     document.getElementById("customRowUnit").value = "";
     document.getElementById("customRowRate").value = "";
   };
@@ -187,7 +188,7 @@ class AdminPageCMT extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.getCMTTableContent()}{" "}
+            {this.getCMTTableContent()}
             {this.state.customRowAddBool ? this.addCustomRow() : null}
           </tbody>
         </Table>

@@ -5,7 +5,7 @@ import Fabric_Canvas_My from "./fabricCanvas";
 import NavBar from "./navBar";
 import ToolBar from "./toolBar";
 import { withRouter } from "react-router-dom";
-import CountUp from "react-countup";
+import { CountUp } from "react-countup";
 
 class MainDesign extends Component {
   state = { display: "yes" };
@@ -63,23 +63,6 @@ class MainDesign extends Component {
               ></Fabric_Canvas_My>
             </Col>
             <Col ml="2">
-              <div>
-                <Row>
-                  <h3 className="mt-4">Cost estimate:</h3>
-                </Row>
-                <Row>
-                  <h3>
-                    <CountUp
-                      prefix={"₹"}
-                      start={50}
-                      end={10000}
-                      duration={0.8}
-                    />
-                  </h3>
-                </Row>
-              </div>
-            </Col>
-            {/* <Col ml="2">
               <div>
                 <label
                   for="files"
@@ -168,7 +151,7 @@ class MainDesign extends Component {
                   Upload Patterns
                 </Button>
               </div>
-            </Col> */}
+            </Col>
           </Row>
         </Container>
       </div>
