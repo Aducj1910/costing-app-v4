@@ -13,9 +13,11 @@ import AdminGetItemType from "./adminGetItemType";
 import { AiTwotoneDelete } from "react-icons/ai";
 import { db, auth } from "../services/firebase";
 import tick from "../gifs/tick.gif";
+import Popup from "reactjs-popup";
 
 class AddComponentPage extends Component {
   state = {
+    componentType: "Component",
     BOMitemCount: 0,
     BOMitemCountArray: [],
     CMTitemCount: 0,
@@ -108,15 +110,32 @@ class AddComponentPage extends Component {
       CMTtypeObjList.push(CMTTypeObj);
     });
 
-    db.collection("components")
-      .doc(this.state.componentId)
-      .set({
-        id: document.getElementById("compId").value,
-        name: document.getElementById("compName").value,
-        comp: this.state.imgComp,
-        config: typeObjList,
-        CMT_config: CMTtypeObjList,
-      });
+    if (this.state.componentType == "Silhouette") {
+      let silhouetteCompsArray = [
+        this.props.latestSilhouettes[0].comp,
+        this.props.latestSilhouettes[1].comp,
+      ];
+
+      db.collection("silhouettes")
+        .doc(this.state.componentId)
+        .set({
+          id: document.getElementById("compId").value,
+          name: document.getElementById("compName").value,
+          comp: silhouetteCompsArray,
+          config: typeObjList,
+          CMT_config: CMTtypeObjList,
+        });
+    } else {
+      db.collection("components")
+        .doc(this.state.componentId)
+        .set({
+          id: document.getElementById("compId").value,
+          name: document.getElementById("compName").value,
+          comp: this.state.imgComp,
+          config: typeObjList,
+          CMT_config: CMTtypeObjList,
+        });
+    }
 
     this.setState({ toRenderTick: true });
     setTimeout(
@@ -245,6 +264,14 @@ class AddComponentPage extends Component {
     ));
   };
 
+  changeComponentType = () => {
+    if (this.state.componentType == "Component") {
+      this.setState({ componentType: "Silhouette" });
+    } else if (this.state.componentType == "Silhouette") {
+      this.setState({ componentType: "Component" });
+    }
+  };
+
   renderNewBOMItemInput = () => {
     return [...Array(this.state.BOMitemCount)].map((e, i) => (
       <tr id={"tr" + i} key={i}>
@@ -274,6 +301,46 @@ class AddComponentPage extends Component {
     ));
   };
 
+  fileUploadRender = () => {
+    if (this.state.componentType == "Silhouette") {
+      return (
+        <Popup
+          trigger={<button className="button"> Silhouette Import </button>}
+          modal
+        >
+          <Row>
+            <input
+              type="file"
+              onChange={this.props.onHandleUploadedSilhouetteMainFiles}
+            ></input>
+            <Button bsPrefix="super-btn" variant="primary">
+              Upload Silhouette Main
+            </Button>
+          </Row>
+          <Row className="mt-3">
+            <input
+              type="file"
+              onChange={this.props.onHandleUploadedSilhouetteMaskFiles}
+            ></input>
+            <Button bsPrefix="super-btn" variant="primary">
+              Upload Silhouette Mask
+            </Button>
+          </Row>
+          <Row className="justify-content-md-center mt-3">
+            <Button
+              variant={this.props.buttonProcessing[1]}
+              onClick={this.props.onHandleSilhouettesCombine}
+            >
+              {this.props.buttonProcessing[2]}
+            </Button>
+          </Row>
+        </Popup>
+      );
+    } else {
+      return <input type="file" onChange={this.getComponentImage} />;
+    }
+  };
+
   getTickRender = () => {
     if (this.state.toRenderTick) {
       return <img src={tick} width={40} height={40} />;
@@ -289,16 +356,23 @@ class AddComponentPage extends Component {
           <NavBar />
         </header>
         <Row className="m-2">
-          <input type="file" onChange={this.getComponentImage} />
-          <input //ADD FUNCTIONALITY TO THIS FEATURE OF COMPONENT ID LATER ON
-            className="mr-2" //IMP
-            type="text" //IMP
-            placeholder="ID" //IMP
-            id="compId" //IMP
-            style={{ width: 40 }} //IMP
+          {this.fileUploadRender()}
+          <input
+            className="mr-2 ml-2"
+            type="text"
+            placeholder="ID"
+            id="compId"
+            style={{ width: 40 }}
             onChange={this.getId}
           />
           <input type="text" placeholder="Enter name..." id="compName" />
+          <Button
+            className="ml-2"
+            variant="warning"
+            onClick={() => this.changeComponentType()}
+          >
+            {this.state.componentType + " (Click to toggle)"}
+          </Button>
         </Row>
         <Row className="m-2">
           <Table>

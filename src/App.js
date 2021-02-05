@@ -258,6 +258,87 @@ class App extends Component {
       componentRenderSwitch: false,
       patternRenderSwitch: false,
     });
+
+    let propertyBOM = this.state.propertyBOM;
+    let propertyCMT = this.state.propertyCMT;
+
+    silht.CMT_config.forEach((element) => {
+      let unit = "none";
+      let rate = -1;
+      let id = -1;
+
+      propertyCMT.forEach((CMTElement) => {
+        if (element.activity == CMTElement.activity) {
+          unit = CMTElement.unit;
+          rate = CMTElement.rate;
+          id = CMTElement.id;
+        }
+      });
+
+      let addNew = true;
+      let CMT = this.state.CMT;
+      CMT.forEach((CMTElement) => {
+        if (element.activity == CMTElement.activity) {
+          CMTElement.consumption =
+            parseFloat(CMTElement.consumption) +
+            parseFloat(element.consumption);
+          addNew = false;
+        }
+      });
+      this.setState({ CMT });
+
+      if (addNew) {
+        let selectedItemCMT = {
+          activity: element.activity,
+          id: id,
+          unit: unit,
+          consumption: parseFloat(element.consumption),
+          rate: parseFloat(rate),
+        };
+        CMT.push(selectedItemCMT);
+        this.setState({ CMT });
+      }
+    });
+
+    silht.config.forEach((element) => {
+      let unit = "none";
+      let rate = -1;
+      let id = -1;
+
+      propertyBOM.forEach((BOMElement) => {
+        if (element.name == BOMElement.name) {
+          unit = BOMElement.unit;
+          rate = BOMElement.rate;
+          id = BOMElement.id;
+        }
+      });
+
+      let addNew = true;
+      let BOM = this.state.BOM;
+      BOM.forEach((BOMElement) => {
+        if (element.name == BOMElement.name) {
+          BOMElement.consumption =
+            parseFloat(BOMElement.consumption) +
+            parseFloat(element.consumption);
+          addNew = false;
+        }
+      });
+      this.setState({ BOM });
+
+      if (addNew) {
+        let selectedItemBOM = {
+          name: element.name,
+          type: element.type,
+          id: id,
+          unit: unit,
+          consumption: parseFloat(element.consumption),
+          rate: parseFloat(rate),
+        };
+
+        BOM.push(selectedItemBOM);
+        this.setState({ BOM });
+      }
+    });
   };
 
   drawPattern = (patternComp) => {
@@ -423,25 +504,24 @@ class App extends Component {
           <AdminPageCMT />
         </Route>
         <Route path="/component">
-          <AddComponentPage />
-        </Route>
-        <Route path="/pattern">
-          <AddPattern />
-        </Route>
-        <Route path="/silhouette">
-          <AddSilhouette
+          <AddComponentPage
             onHandleUploadedSilhouetteMainFiles={
               this.handleUploadedSilhouetteMainFiles
             }
             onHandleUploadedSilhouetteMaskFiles={
               this.handleUploadedSilhouetteMaskFiles
             }
-            combinedSilhouettesArray={this.state.combinedSilhouettesArray}
             onHandleSilhouettesCombine={this.handleSilhouettesCombine}
             buttonProcessing={this.state.buttonProcessing}
             latestSilhouettes={this.state.latestSilhouettes}
           />
         </Route>
+        <Route path="/pattern">
+          <AddPattern />
+        </Route>
+        {/* <Route path="/silhouette">
+          <AddSilhouette />
+        </Route> */}
       </div>
     );
   }

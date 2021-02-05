@@ -29,9 +29,9 @@ const NavBar = (props) => {
             <Nav.Link as={Link} to="/pattern">
               Pattern
             </Nav.Link>
-            <Nav.Link as={Link} to="/silhouette">
+            {/* <Nav.Link as={Link} to="/silhouette">
               Silhouette
-            </Nav.Link>
+            </Nav.Link> */}
             {/* <Nav.Link href="#features">Features</Nav.Link> */}
             <Nav.Link as={Link} to="/admin-bom">
               BOM
