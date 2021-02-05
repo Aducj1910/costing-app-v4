@@ -86,8 +86,8 @@ const Fabric_Canvas_My = (props) => {
   };
 
   const addSilhouette = () => {
-    main.src = currentSilhouette[0].comp;
-    mask.src = currentSilhouette[1].comp;
+    main.src = currentSilhouette.comp[0];
+    mask.src = currentSilhouette.comp[1];
 
     main_ = new fabric.Image(main, { selectable: false });
     mask_ = new fabric.Image(mask, { selectable: false });

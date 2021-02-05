@@ -4,8 +4,13 @@ import { FaTshirt } from "react-icons/fa";
 
 //map each <Dropdown.Item> to an element in array later on
 const PatternDropdown = (props) => {
-  const { label, uploadedPatternFiles, drawPattern } = props;
-  var componentFiles = uploadedPatternFiles;
+  const {
+    label,
+    importedPatternFiles,
+    uploadedPatternFiles,
+    drawPattern,
+  } = props;
+  var componentFiles = importedPatternFiles;
 
   return (
     <React.Fragment>

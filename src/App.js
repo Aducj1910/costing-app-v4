@@ -1,6 +1,8 @@
 import React, { Component, createRef } from "react";
 import { Route, Switch, withRouter } from "react-router-dom";
 import AddComponentPage from "./components/addComponentPage";
+import AddPattern from "./components/addPatternPage";
+import AddSilhouette from "./components/addSilhouettePage";
 import AdminPageBOM from "./components/adminPageBOM";
 import AdminPageCMT from "./components/adminPageCMT";
 import MainDesign from "./components/mainDesign";
@@ -30,6 +32,9 @@ class App extends Component {
     propertyBOM: [],
     propertyCMT: [],
     estimatedCost: 0,
+    importedPatternFiles: [],
+    importedSilhouetteFiles: [],
+    latestSilhouettes: [],
   };
 
   componentDidMount() {
@@ -72,6 +77,28 @@ class App extends Component {
         this.setState({ propertyBOM: pvtpropertyBOMArray });
       })
       .catch((error) => console.log(error));
+
+    db.collection("patterns")
+      .get()
+      .then((snapshot) => {
+        let pvtPatternArray = [];
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          pvtPatternArray.push(data);
+        });
+        this.setState({ importedPatternFiles: pvtPatternArray });
+      });
+
+    db.collection("silhouettes")
+      .get()
+      .then((snapshot) => {
+        let pvtSilhouettesArray = [];
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          pvtSilhouettesArray.push(data);
+        });
+        this.setState({ importedSilhouetteFiles: pvtSilhouettesArray });
+      });
   }
 
   componentWillUnmount() {
@@ -291,6 +318,8 @@ class App extends Component {
         this.state.uploadedSilhouetteMaskFiles,
       ];
       let arr = this.state.combinedSilhouettesArray;
+      console.log(newLocalArrayofSilhouettes);
+      this.setState({ latestSilhouettes: newLocalArrayofSilhouettes });
       arr.push(newLocalArrayofSilhouettes);
       this.setState({
         combinedSilhouettesArray: arr,
@@ -367,7 +396,8 @@ class App extends Component {
             uploadedComponentFiles={this.state.uploadedComponentFiles}
             uploadedPatternFiles={this.state.uploadedPatternFiles}
             importedComponentFiles={this.state.importedComponentFiles}
-            uploadedSilhouetteFiles={this.state.uploadedSilhouetteFiles}
+            importedPatternFiles={this.state.importedPatternFiles}
+            importedSilhouetteFiles={this.state.importedSilhouetteFiles}
             currentComp={this.state.currentComp}
             componentRenderSwitch={this.state.componentRenderSwitch}
             drawComponent={this.drawComponent}
@@ -392,8 +422,25 @@ class App extends Component {
         <Route path="/admin-cmt">
           <AdminPageCMT />
         </Route>
-        <Route path="/add-component">
+        <Route path="/component">
           <AddComponentPage />
+        </Route>
+        <Route path="/pattern">
+          <AddPattern />
+        </Route>
+        <Route path="/silhouette">
+          <AddSilhouette
+            onHandleUploadedSilhouetteMainFiles={
+              this.handleUploadedSilhouetteMainFiles
+            }
+            onHandleUploadedSilhouetteMaskFiles={
+              this.handleUploadedSilhouetteMaskFiles
+            }
+            combinedSilhouettesArray={this.state.combinedSilhouettesArray}
+            onHandleSilhouettesCombine={this.handleSilhouettesCombine}
+            buttonProcessing={this.state.buttonProcessing}
+            latestSilhouettes={this.state.latestSilhouettes}
+          />
         </Route>
       </div>
     );

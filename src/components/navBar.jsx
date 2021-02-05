@@ -12,7 +12,7 @@ const NavBar = (props) => {
         <Navbar bg="primary" variant="dark">
           <Navbar.Brand>Costing</Navbar.Brand>
           <Nav className="mr-auto">
-            <Nav.Link as={Link} to="/add-component" target="_blank">
+            <Nav.Link as={Link} to="/component" target="_blank">
               Dashboard
             </Nav.Link>
           </Nav>
@@ -23,8 +23,14 @@ const NavBar = (props) => {
         <Navbar bg="primary" variant="dark">
           <Navbar.Brand>Costing</Navbar.Brand>
           <Nav className="mr-auto">
-            <Nav.Link as={Link} to="/add-component">
-              Add Component
+            <Nav.Link as={Link} to="/component">
+              Component
+            </Nav.Link>
+            <Nav.Link as={Link} to="/pattern">
+              Pattern
+            </Nav.Link>
+            <Nav.Link as={Link} to="/silhouette">
+              Silhouette
             </Nav.Link>
             {/* <Nav.Link href="#features">Features</Nav.Link> */}
             <Nav.Link as={Link} to="/admin-bom">

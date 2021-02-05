@@ -20,9 +20,8 @@ const Canvas = (props) => {
     let silMask = new Image();
 
     if (silhouetteRenderSwitch) {
-      console.log(currentSilhouette[0].comp);
-      silMain.src = currentSilhouette[0].comp;
-      silMask.src = currentSilhouette[1].comp;
+      silMain.src = currentSilhouette.comp[0];
+      silMask.src = currentSilhouette.comp[1];
     }
 
     if (componentRenderSwitch) {

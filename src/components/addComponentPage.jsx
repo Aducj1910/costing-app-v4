@@ -111,6 +111,7 @@ class AddComponentPage extends Component {
     db.collection("components")
       .doc(this.state.componentId)
       .set({
+        id: document.getElementById("compId").value,
         name: document.getElementById("compName").value,
         comp: this.state.imgComp,
         config: typeObjList,
@@ -150,7 +151,6 @@ class AddComponentPage extends Component {
     }
     rowToDelete.remove();
     this.setState({ BOMitemCountArray });
-    console.log(BOMitemCountArray);
   };
 
   RenderBOMItemNameChoice = (index) => {
@@ -196,6 +196,17 @@ class AddComponentPage extends Component {
     this.setState({ CMTTitleObject });
   };
 
+  deleteCMTItem = (index) => {
+    let rowToDelete = document.getElementById("CMTtr" + index);
+    let CMTitemCountArray = this.state.CMTitemCountArray;
+    var i = CMTitemCountArray.indexOf(index);
+    if (index !== -1) {
+      CMTitemCountArray.splice(i, 1);
+    }
+    rowToDelete.remove();
+    this.setState({ CMTitemCountArray });
+  };
+
   renderNewCMTItemInput = () => {
     return [...Array(this.state.CMTitemCount)].map((e, i) => (
       <tr id={"CMTtr" + i} key={i}>
@@ -221,6 +232,14 @@ class AddComponentPage extends Component {
         </td>
         <td>
           <input id={"CMT-consumption" + i} type="text" />
+        </td>
+        <td>
+          <button
+            style={{ border: "none", background: "none" }}
+            onClick={() => this.deleteCMTItem(i)}
+          >
+            <AiTwotoneDelete />
+          </button>
         </td>
       </tr>
     ));

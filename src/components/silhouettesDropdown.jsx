@@ -4,7 +4,12 @@ import { FaTshirt } from "react-icons/fa";
 
 //map each <Dropdown.Item> to an element in array later on
 const SilhouettesDropdown = (props) => {
-  const { label, drawSilhouettes, combinedSilhouettesArray } = props;
+  const {
+    label,
+    drawSilhouettes,
+    combinedSilhouettesArray,
+    importedSilhouetteFiles,
+  } = props;
 
   return (
     <React.Fragment>
@@ -22,12 +27,9 @@ const SilhouettesDropdown = (props) => {
         id="bg-vertical-dropdown-1"
         variant="flat"
       >
-        {combinedSilhouettesArray.map((comp) => (
-          <Dropdown.Item
-            key={comp[0].size}
-            onClick={() => drawSilhouettes(comp)}
-          >
-            {comp[0].name}
+        {importedSilhouetteFiles.map((comp) => (
+          <Dropdown.Item key={comp.id} onClick={() => drawSilhouettes(comp)}>
+            {comp.name}
           </Dropdown.Item>
         ))}
         {/* <Dropdown.Item eventKey="2">Dropdown link</Dropdown.Item> */}

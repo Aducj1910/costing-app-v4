@@ -25,10 +25,12 @@ class ToolBar extends Component {
         <SilhouettesDropdown
           label="Silhouettes"
           combinedSilhouettesArray={this.props.combinedSilhouettesArray}
+          importedSilhouetteFiles={this.props.importedSilhouetteFiles}
           drawSilhouettes={this.props.drawSilhouettes}
         ></SilhouettesDropdown>
         <PatternDropdown
           label="Patterns"
+          importedPatternFiles={this.props.importedPatternFiles}
           uploadedPatternFiles={this.props.uploadedPatternFiles}
           drawPattern={this.props.drawPattern}
         />

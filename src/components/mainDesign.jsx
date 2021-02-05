@@ -32,6 +32,8 @@ class MainDesign extends Component {
                 uploadedComponentFiles={this.props.uploadedComponentFiles}
                 uploadedPatternFiles={this.props.uploadedPatternFiles}
                 importedComponentFiles={this.props.importedComponentFiles}
+                importedPatternFiles={this.props.importedPatternFiles}
+                importedSilhouetteFiles={this.props.importedSilhouetteFiles}
                 hiddenRef={this.props.hiddenRef}
                 drawComponent={this.props.drawComponent}
                 combinedSilhouettesArray={this.props.combinedSilhouettesArray}
@@ -79,96 +81,6 @@ class MainDesign extends Component {
                 </Row>
               </div>
             </Col>
-            {/* <Col ml="2">
-              <div>
-                <label
-                  for="files"
-                  class="btn"
-                  className="mt-2"
-                  style={{ color: "red" }}
-                >
-                  Upload custom components below
-                </label>
-                <input
-                  type="file"
-                  onChange={this.props.onHandleUploadedComponentFiles}
-                  multiple="multiple"
-                />
-              </div>
-              <div className="mt-3">
-                <Button
-                  bsPrefix="super-btn"
-                  variant="primary"
-                  onClick={this.props.onComponentFilesUploadData}
-                >
-                  Upload Components
-                </Button>
-              </div>
-              <div className="mt-3">
-                <label style={{ color: "red" }}>Upload silhouettes below</label>
-              </div>
-              <div>
-                <Popup
-                  trigger={
-                    <button className="button"> Silhouette Import </button>
-                  }
-                  modal
-                >
-                  <Row>
-                    <input
-                      type="file"
-                      onChange={this.props.onHandleUploadedSilhouetteMainFiles}
-                    ></input>{" "}
-                    <Button bsPrefix="super-btn" variant="primary">
-                      Upload Silhouette Main
-                    </Button>
-                  </Row>
-                  <Row className="mt-3">
-                    <input
-                      type="file"
-                      onChange={this.props.onHandleUploadedSilhouetteMaskFiles}
-                    ></input>{" "}
-                    <Button bsPrefix="super-btn" variant="primary">
-                      Upload Silhouette Mask
-                    </Button>
-                  </Row>
-                  <Row className="justify-content-md-center mt-3">
-                    <Button
-                      variant={this.props.buttonProcessing[1]}
-                      onClick={this.props.onHandleSilhouettesCombine}
-                    >
-                      {this.props.buttonProcessing[2]}
-                    </Button>
-                  </Row>
-                </Popup>
-              </div>
-            </Col>
-            <Col>
-              <div>
-                <label
-                  for="files"
-                  class="btn"
-                  className="mt-2"
-                  style={{ color: "red" }}
-                >
-                  Upload custom patterns below
-                </label>
-                <input
-                  type="file"
-                  onChange={this.props.onHandleUploadedPatternFiles}
-                  multiple="multiple"
-                />
-              </div>
-              <div className="mt-3">
-                <Button
-                  bsPrefix="super-btn"
-                  variant="primary"
-                  onClick={this.props.onPatternFilesUploadData}
-                >
-                  Upload Patterns
-                </Button>
-              </div>
-            </Col> */}
           </Row>
         </Container>
       </div>
