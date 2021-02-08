@@ -100,7 +100,6 @@ const Fabric_Canvas_My = (props) => {
   const addPattern = () => {
     var patternImg = new Image();
     patternImg.src = currentPatternComp;
-    console.log(patternImg.src);
     let patternImg_ = new fabric.Image(patternImg);
 
     canvas.setBackgroundImage(patternImg_);

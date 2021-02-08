@@ -32,7 +32,10 @@ const ComponentDropdown = (props) => {
         {importedComponentFiles.map((comp) => (
           <Dropdown.Item
             onClick={() =>
-              drawComponent(comp.comp, comp.config, comp.CMT_config)
+              drawComponent(comp.comp, comp.config, comp.CMT_config, [
+                comp.name,
+                comp.id,
+              ])
             }
             key={comp.name}
           >

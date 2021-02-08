@@ -28,7 +28,10 @@ const SilhouettesDropdown = (props) => {
         variant="flat"
       >
         {importedSilhouetteFiles.map((comp) => (
-          <Dropdown.Item key={comp.id} onClick={() => drawSilhouettes(comp)}>
+          <Dropdown.Item
+            key={comp.id}
+            onClick={() => drawSilhouettes(comp, comp.id, comp.name)}
+          >
             {comp.name}
           </Dropdown.Item>
         ))}

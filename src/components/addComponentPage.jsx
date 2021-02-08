@@ -14,6 +14,7 @@ import { AiTwotoneDelete } from "react-icons/ai";
 import { db, auth } from "../services/firebase";
 import tick from "../gifs/tick.gif";
 import Popup from "reactjs-popup";
+import { Helmet } from "react-helmet";
 
 class AddComponentPage extends Component {
   state = {
@@ -56,6 +57,8 @@ class AddComponentPage extends Component {
         });
         this.setState({ CMTItemsArray: pvtCMTItemsArray });
       });
+
+    document.title = "Dashboard";
   };
 
   onItemTypeSelected = (rowId, selectedType) => {
@@ -188,6 +191,9 @@ class AddComponentPage extends Component {
 
     return (
       <React.Fragment>
+        <Helmet>
+          <title>Dashboard</title>
+        </Helmet>
         <DropdownButton id={"name" + index} className="ml-2">
           {nameArray.map((element) => (
             <Dropdown.Item

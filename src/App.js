@@ -1,3 +1,4 @@
+import { forEach } from "lodash";
 import React, { Component, createRef } from "react";
 import { Route, Switch, withRouter } from "react-router-dom";
 import AddComponentPage from "./components/addComponentPage";
@@ -11,6 +12,8 @@ import { db, auth } from "./services/firebase";
 class App extends Component {
   state = {
     uploadedComponentFiles: [],
+    componentsDrawn: [],
+    silhouettesDrawn: [],
     uploadedPatternFiles: [],
     importedComponentFiles: [],
     uploadedSilhouetteMainFiles: null, //only locally used
@@ -110,6 +113,27 @@ class App extends Component {
     this.calculateCost();
   };
 
+  appendDrawn = (typeSwitch, compName, compId) => {
+    if (typeSwitch == "component") {
+      let componentsDrawn = this.state.componentsDrawn;
+      let componentAlreadyDrawn = false;
+      componentsDrawn.forEach((element) => {
+        if (element.id == compId) {
+          element.count += 1;
+          componentAlreadyDrawn = true;
+        }
+      });
+      if (!componentAlreadyDrawn) {
+        let newComponent = { id: compId, count: 1 };
+        componentsDrawn.push(newComponent);
+      }
+
+      this.setState({ componentsDrawn });
+    } else if (typeSwitch == "silhouette") {
+      console.log("Silhouette"); //DO THIS
+    }
+  };
+
   // mouseFunction = (event) => {};
 
   keyFunction = (event) => {
@@ -137,6 +161,8 @@ class App extends Component {
     CMT.forEach((element) => {
       CMTCost = CMTCost + element.consumption * element.rate;
     });
+
+    console.log(BOMCost + CMTCost);
   };
 
   handleUploadedComponentFiles = (event) => {
@@ -160,7 +186,12 @@ class App extends Component {
     });
   };
 
-  drawComponent = (componentComp, componentConfig, componentCMTConfig) => {
+  drawComponent = (
+    componentComp,
+    componentConfig,
+    componentCMTConfig,
+    componentNameIdArray
+  ) => {
     this.setState({
       currentComp: componentComp,
       componentRenderSwitch: true,
@@ -171,6 +202,26 @@ class App extends Component {
     let propertyBOM = this.state.propertyBOM;
     let propertyCMT = this.state.propertyCMT;
     //adding to local BOM
+    let repeatAddition = false;
+
+    this.state.componentsDrawn.forEach((element) => {
+      if (element.id == componentNameIdArray[1]) {
+        if (element.count == 1) {
+          repeatAddition = true;
+          console.log("Repeated");
+        }
+      }
+    });
+    this.appendDrawn(
+      "component",
+      componentNameIdArray[0],
+      componentNameIdArray[1]
+    );
+
+    if (repeatAddition) {
+      componentCMTConfig = [];
+      componentConfig = [];
+    }
 
     componentCMTConfig.forEach((element) => {
       let unit = "none";
@@ -251,7 +302,7 @@ class App extends Component {
     });
   };
 
-  drawSilhouettes = (silht) => {
+  drawSilhouettes = (silht, silhtId, silhtName) => {
     this.setState({
       currentSilhouette: silht,
       silhouetteRenderSwitch: true,
@@ -261,6 +312,23 @@ class App extends Component {
 
     let propertyBOM = this.state.propertyBOM;
     let propertyCMT = this.state.propertyCMT;
+    let repeatAddition = false;
+
+    this.state.silhouettesDrawn.forEach((element) => {
+      if (element.id == silhtId) {
+        if (element.count == 1) {
+          repeatAddition = true;
+        }
+      }
+    });
+
+    // this.appendDrawn("silhouette") DO THIS
+
+    if (repeatAddition) {
+      console.log(silht.CMT_config);
+      silht.CMT_config = [];
+      silht.config = [];
+    }
 
     silht.CMT_config.forEach((element) => {
       let unit = "none";

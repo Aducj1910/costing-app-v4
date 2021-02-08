@@ -6,22 +6,17 @@ import NavBar from "./navBar";
 import ToolBar from "./toolBar";
 import { withRouter } from "react-router-dom";
 import CountUp from "react-countup";
+import { Helmet } from "react-helmet"; //for page title
 
 class MainDesign extends Component {
   state = { display: "yes" };
 
   render() {
-    // console.log(this.props.location.pathname);
-    // if (this.props.location.pathname === "/" && this.state.display !== "yes") {
-    //   this.setState({ display: "yes" });
-    // } else if (
-    //   this.props.location.pathname === "/add-component" &&
-    //   this.state.display !== "none"
-    // ) {
-    //   this.setState({ display: "none" });
-    // }
     return (
       <div style={{ display: this.state.display }}>
+        <Helmet>
+          <title>Design</title>
+        </Helmet>
         <header>
           <NavBar onCanvasScreen={true}></NavBar>
         </header>
