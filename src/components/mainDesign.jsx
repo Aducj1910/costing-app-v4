@@ -68,11 +68,16 @@ class MainDesign extends Component {
                   <h3>
                     <CountUp
                       prefix={"₹"}
-                      start={50}
-                      end={10000}
+                      start={this.props.prevCost}
+                      end={this.props.estimatedCost}
                       duration={0.8}
                     />
                   </h3>
+                </Row>
+                <Row className="mt-2">
+                  <Button onClick={() => this.props.exportData()}>
+                    Export
+                  </Button>
                 </Row>
               </div>
             </Col>

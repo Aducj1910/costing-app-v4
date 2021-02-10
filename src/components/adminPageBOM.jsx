@@ -195,7 +195,7 @@ class AdminPageBOM extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.getBOMTableContent()}{" "}
+            {this.getBOMTableContent()}
             {this.state.customRowAddBool ? this.addCustomRow() : null}
           </tbody>
         </Table>

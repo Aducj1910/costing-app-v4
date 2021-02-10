@@ -1,13 +1,3 @@
-Custom id for components
+Units in result.jsx & configPage.jsx
 
-Add CMT
-
-Pattern upload functionality
-
-Silhouette upload functionality
-
-Delete functionality for BOM
-
-Delete functionality for CMT
-
-Component manager with delete functionality
+Result to CSX/XLSX/PDF

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Navbar, Nav } from "react-bootstrap";
+import { Navbar, Nav, NavDropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
 
@@ -23,22 +23,24 @@ const NavBar = (props) => {
         <Navbar bg="primary" variant="dark">
           <Navbar.Brand>Costing</Navbar.Brand>
           <Nav className="mr-auto">
-            <Nav.Link as={Link} to="/component">
-              Component
-            </Nav.Link>
-            <Nav.Link as={Link} to="/pattern">
-              Pattern
-            </Nav.Link>
-            {/* <Nav.Link as={Link} to="/silhouette">
-              Silhouette
-            </Nav.Link> */}
-            {/* <Nav.Link href="#features">Features</Nav.Link> */}
-            <Nav.Link as={Link} to="/admin-bom">
-              BOM
-            </Nav.Link>
-            <Nav.Link as={Link} to="/admin-cmt">
-              CMT
-            </Nav.Link>
+            <NavDropdown title="Add">
+              <NavDropdown.Item href="/component">
+                Component/Silhouette
+              </NavDropdown.Item>
+              <NavDropdown.Item href="/pattern">Pattern</NavDropdown.Item>
+            </NavDropdown>
+            <NavDropdown title="Manage">
+              <NavDropdown.Item href="/manage-component">
+                Component
+              </NavDropdown.Item>
+              <NavDropdown.Item href="/manage-pattern">
+                Pattern
+              </NavDropdown.Item>
+            </NavDropdown>
+            <NavDropdown title="Data">
+              <NavDropdown.Item href="/admin-bom">BOM</NavDropdown.Item>
+              <NavDropdown.Item href="/admin-cmt">CMT</NavDropdown.Item>
+            </NavDropdown>
           </Nav>
         </Navbar>
       );

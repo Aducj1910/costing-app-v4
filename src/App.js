@@ -1,12 +1,16 @@
 import { forEach } from "lodash";
 import React, { Component, createRef } from "react";
-import { Route, Switch, withRouter } from "react-router-dom";
+import { BrowserRouter, Route, Switch, withRouter } from "react-router-dom";
 import AddComponentPage from "./components/addComponentPage";
 import AddPattern from "./components/addPatternPage";
 import AddSilhouette from "./components/addSilhouettePage";
 import AdminPageBOM from "./components/adminPageBOM";
 import AdminPageCMT from "./components/adminPageCMT";
+import ConfigPage from "./components/configPage";
 import MainDesign from "./components/mainDesign";
+import Manage from "./components/manage";
+import NavBar from "./components/navBar";
+import ResultPage from "./components/result";
 import { db, auth } from "./services/firebase";
 
 class App extends Component {
@@ -35,6 +39,7 @@ class App extends Component {
     propertyBOM: [],
     propertyCMT: [],
     estimatedCost: 0,
+    prevCost: 0,
     importedPatternFiles: [],
     importedSilhouetteFiles: [],
     latestSilhouettes: [],
@@ -109,10 +114,6 @@ class App extends Component {
     document.removeEventListener("click", this.mouseFunction, false);
   }
 
-  componentDidUpdate = () => {
-    this.calculateCost();
-  };
-
   appendDrawn = (typeSwitch, compName, compId) => {
     if (typeSwitch == "component") {
       let componentsDrawn = this.state.componentsDrawn;
@@ -121,16 +122,31 @@ class App extends Component {
         if (element.id == compId) {
           element.count += 1;
           componentAlreadyDrawn = true;
+          return true;
         }
       });
       if (!componentAlreadyDrawn) {
-        let newComponent = { id: compId, count: 1 };
+        let newComponent = { id: compId, count: 0 };
         componentsDrawn.push(newComponent);
+        return false;
       }
-
       this.setState({ componentsDrawn });
     } else if (typeSwitch == "silhouette") {
-      console.log("Silhouette"); //DO THIS
+      let silhouettesDrawn = this.state.silhouettesDrawn;
+      let silhouettesAlreadyDrawn = false;
+      silhouettesDrawn.forEach((element) => {
+        if (element.id == compId) {
+          element.count += 1;
+          silhouettesAlreadyDrawn = true;
+          return true;
+        }
+      });
+      if (!silhouettesAlreadyDrawn) {
+        let newSilhouette = { id: compId, count: 0 };
+        silhouettesDrawn.push(newSilhouette);
+        return false;
+      }
+      this.setState({ silhouettesDrawn });
     }
   };
 
@@ -162,7 +178,9 @@ class App extends Component {
       CMTCost = CMTCost + element.consumption * element.rate;
     });
 
-    console.log(BOMCost + CMTCost);
+    let estimatedCost = BOMCost + CMTCost;
+    let prevCost = this.state.estimatedCost;
+    this.setState({ estimatedCost, prevCost });
   };
 
   handleUploadedComponentFiles = (event) => {
@@ -206,19 +224,21 @@ class App extends Component {
 
     this.state.componentsDrawn.forEach((element) => {
       if (element.id == componentNameIdArray[1]) {
-        if (element.count == 1) {
+        if (element.count == 0) {
           repeatAddition = true;
           console.log("Repeated");
         }
       }
     });
-    this.appendDrawn(
+
+    let componentAlreadyDrawn = this.appendDrawn(
       "component",
       componentNameIdArray[0],
       componentNameIdArray[1]
     );
 
-    if (repeatAddition) {
+    if (componentAlreadyDrawn == false) {
+      console.log("called");
       componentCMTConfig = [];
       componentConfig = [];
     }
@@ -300,6 +320,7 @@ class App extends Component {
         this.setState({ BOM });
       }
     });
+    this.calculateCost();
   };
 
   drawSilhouettes = (silht, silhtId, silhtName) => {
@@ -316,21 +337,26 @@ class App extends Component {
 
     this.state.silhouettesDrawn.forEach((element) => {
       if (element.id == silhtId) {
-        if (element.count == 1) {
+        if (element.count == 0) {
           repeatAddition = true;
         }
       }
     });
 
-    // this.appendDrawn("silhouette") DO THIS
+    let silhtAlreadyDrawn = this.appendDrawn(
+      "silhouette",
+      silht.name,
+      silht.id
+    );
+    let CMTConf = silht.CMT_config;
+    let conf = silht.config;
 
-    if (repeatAddition) {
-      console.log(silht.CMT_config);
-      silht.CMT_config = [];
-      silht.config = [];
+    if (silhtAlreadyDrawn == false) {
+      CMTConf = [];
+      conf = [];
     }
 
-    silht.CMT_config.forEach((element) => {
+    CMTConf.forEach((element) => {
       let unit = "none";
       let rate = -1;
       let id = -1;
@@ -368,7 +394,7 @@ class App extends Component {
       }
     });
 
-    silht.config.forEach((element) => {
+    conf.forEach((element) => {
       let unit = "none";
       let rate = -1;
       let id = -1;
@@ -407,6 +433,7 @@ class App extends Component {
         this.setState({ BOM });
       }
     });
+    this.calculateCost();
   };
 
   drawPattern = (patternComp) => {
@@ -416,6 +443,7 @@ class App extends Component {
       silhouetteRenderSwitch: false,
       componentRenderSwitch: false,
     });
+    this.calculateCost();
   };
 
   handleUploadedSilhouetteMainFiles = (event) => {
@@ -525,6 +553,12 @@ class App extends Component {
     });
   };
 
+  exportData = () => {
+    //PLACEHOLDER
+    console.log(this.state.BOM);
+    console.log(this.state.CMT);
+  };
+
   render() {
     return (
       <div>
@@ -538,6 +572,7 @@ class App extends Component {
             onHandleUploadedSilhouetteMaskFiles={
               this.handleUploadedSilhouetteMaskFiles
             }
+            exportData={this.exportData}
             combinedSilhouettesArray={this.state.combinedSilhouettesArray}
             onHandleSilhouettesCombine={this.handleSilhouettesCombine}
             onComponentFilesUploadData={this.componentFilesUploadData}
@@ -563,8 +598,34 @@ class App extends Component {
             onHandleColorChangeComplete={this.handleColorChangeComplete}
             onHandleColorUpload={this.handleColorUpload}
             compDict={this.state.compDict}
+            estimatedCost={this.state.estimatedCost}
+            prevCost={this.state.prevCost}
           ></MainDesign>
         </Route>
+        {this.state.importedComponentFiles.map((item) => (
+          <Route path={"/configcomponents" + item.id}>
+            <ConfigPage
+              switch="components"
+              id={item.id}
+              name={item.name}
+              comp={item.comp}
+              config={item.config}
+              CMT_config={item.CMT_config}
+            />
+          </Route>
+        ))}
+        {this.state.importedSilhouetteFiles.map((item) => (
+          <Route path={"/configsilhouettes" + item.id}>
+            <ConfigPage
+              switch="silhouettes"
+              id={item.id}
+              name={item.name}
+              comp={item.comp[0]}
+              config={item.config}
+              CMT_config={item.CMT_config}
+            />
+          </Route>
+        ))}
         <Route path="/admin-bom">
           <AdminPageBOM />
         </Route>
@@ -587,9 +648,15 @@ class App extends Component {
         <Route path="/pattern">
           <AddPattern />
         </Route>
-        {/* <Route path="/silhouette">
-          <AddSilhouette />
-        </Route> */}
+        <Route path="/manage-component">
+          <Manage switch="components" />
+        </Route>
+        <Route path="/manage-pattern">
+          <Manage switch="patterns" />
+        </Route>
+        <Route path="/result">
+          <ResultPage BOM={this.state.BOM} CMT={this.state.CMT} />
+        </Route>
       </div>
     );
   }

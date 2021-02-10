@@ -19,3 +19,6 @@ ________
 4. For background hint in input type text, use <input type="text" placeholder="Enter name..." />, placeholder holds text for 
 any hint.
 ________
+
+5. If you are not able to map routers in App.js, then try to put the map function before the component where the link is.
+________
