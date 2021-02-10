@@ -7,6 +7,7 @@ import ToolBar from "./toolBar";
 import { withRouter } from "react-router-dom";
 import CountUp from "react-countup";
 import { Helmet } from "react-helmet"; //for page title
+import ReactToExcel from "react-html-table-to-excel";
 
 class MainDesign extends Component {
   state = { display: "yes" };
@@ -75,10 +76,62 @@ class MainDesign extends Component {
                   </h3>
                 </Row>
                 <Row className="mt-2">
-                  <Button onClick={() => this.props.exportData()}>
-                    Export
-                  </Button>
+                  <ReactToExcel
+                    className="btn-primary"
+                    table="BOMTable"
+                    filename="BOM"
+                    sheet="BOM"
+                    buttonText="Export"
+                  />
                 </Row>
+              </div>
+              <div style={{ display: "none" }}>
+                <table id="BOMTable">
+                  <thead>
+                    <tr>
+                      <th>Item name</th>
+                      <th>Item type</th>
+                      <th>Consumption</th>
+                      <th>Rate</th>
+                      <th>Est. Cost</th>
+                    </tr>
+                    <tbody>
+                      {this.props.BOM.map((item) => (
+                        <tr>
+                          <td>{item.name}</td>
+                          <td>{item.type}</td>
+                          <td>{item.consumption}</td>
+                          <td>{item.rate}</td>
+                          <td>{item.consumption * item.rate}</td>
+                        </tr>
+                      ))}
+                      {this.props.CMT.map((item) => (
+                        <tr>
+                          <td>{item.activity}</td>
+                          <td>CMT</td>
+                          <td>{item.consumption}</td>
+                          <td>{item.rate}</td>
+                          <td>{item.consumption * item.rate}</td>
+                        </tr>
+                      ))}
+                      <tr>
+                        <td>
+                          <p></p>
+                        </td>
+                        <td>
+                          <p></p>
+                        </td>
+                        <td>
+                          <p></p>
+                        </td>
+                        <td>
+                          <p></p>
+                        </td>
+                        <td>{this.props.estimatedCost}</td>
+                      </tr>
+                    </tbody>
+                  </thead>
+                </table>
               </div>
             </Col>
           </Row>

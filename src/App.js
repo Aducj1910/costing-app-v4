@@ -43,6 +43,7 @@ class App extends Component {
     importedPatternFiles: [],
     importedSilhouetteFiles: [],
     latestSilhouettes: [],
+    dataExportSwitch: false,
   };
 
   componentDidMount() {
@@ -554,9 +555,7 @@ class App extends Component {
   };
 
   exportData = () => {
-    //PLACEHOLDER
-    console.log(this.state.BOM);
-    console.log(this.state.CMT);
+    this.setState({ dataExportSwitch: !this.state.dataExportSwitch });
   };
 
   render() {
@@ -600,6 +599,8 @@ class App extends Component {
             compDict={this.state.compDict}
             estimatedCost={this.state.estimatedCost}
             prevCost={this.state.prevCost}
+            BOM={this.state.BOM}
+            CMT={this.state.CMT}
           ></MainDesign>
         </Route>
         {this.state.importedComponentFiles.map((item) => (
