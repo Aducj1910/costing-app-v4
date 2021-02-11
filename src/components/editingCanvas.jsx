@@ -142,11 +142,13 @@ const EditingCanvas = (props) => {
       top: 20,
       left: 30,
     }); //make sure the position is same later on
+    newImageToRender.compId = objectToRender.compId;
+    console.log(newImageToRender.compId);
     canvas2.add(newImageToRender);
   };
 
   const exportComponent = () => {
-    setEditedObjectSrc(localSrc);
+    setEditedObjectSrc(localSrc, objectToRender.compId);
     canvas2.clear();
   };
 

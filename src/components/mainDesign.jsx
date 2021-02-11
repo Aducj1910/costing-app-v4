@@ -8,9 +8,15 @@ import { withRouter } from "react-router-dom";
 import CountUp from "react-countup";
 import { Helmet } from "react-helmet"; //for page title
 import ReactToExcel from "react-html-table-to-excel";
+import { BiSave } from "react-icons/bi";
 
 class MainDesign extends Component {
-  state = { display: "yes" };
+  state = { display: "yes", uniqueId: Math.random().toString(36).substring(7) };
+
+  combineExportButtons = () => {
+    document.getElementById("r2xl").click();
+    this.props.exportCanvas(this.state.uniqueId);
+  };
 
   render() {
     return (
@@ -23,7 +29,7 @@ class MainDesign extends Component {
         </header>
         <Container fluid>
           <Row>
-            <Col className="m-2" xs={1}>
+            <Col className="m-2" xs={2}>
               <ToolBar
                 uploadedComponentFiles={this.props.uploadedComponentFiles}
                 uploadedPatternFiles={this.props.uploadedPatternFiles}
@@ -42,7 +48,7 @@ class MainDesign extends Component {
                 onHandleColorUpload={this.props.onHandleColorUpload}
               ></ToolBar>
             </Col>
-            <Col className="ml-3">
+            <Col>
               {/* <Canvas
                 currentComp={this.props.currentComp}
                 componentRenderSwitch={this.props.componentRenderSwitch}
@@ -51,6 +57,7 @@ class MainDesign extends Component {
               ></Canvas> */}
               <Fabric_Canvas_My
                 currentComp={this.props.currentComp}
+                exportName={this.props.exportName}
                 componentRenderSwitch={this.props.componentRenderSwitch}
                 currentSilhouette={this.props.currentSilhouette}
                 silhouetteRenderSwitch={this.props.silhouetteRenderSwitch}
@@ -58,7 +65,11 @@ class MainDesign extends Component {
                 currentPatternComp={this.props.currentPatternComp}
                 deleteActiveObject={this.props.deleteActiveObject}
                 compDict={this.props.compDict}
-              ></Fabric_Canvas_My>
+                subtractFromCost={this.props.subtractFromCost}
+                currentCompId={this.props.currentCompId}
+                exportCanvas={this.props.exportCanvas}
+                dataExportSwitch={this.props.dataExportSwitch}
+              />
             </Col>
             <Col ml="2">
               <div>
@@ -76,13 +87,19 @@ class MainDesign extends Component {
                   </h3>
                 </Row>
                 <Row className="mt-2">
-                  <ReactToExcel
-                    className="btn-primary"
-                    table="BOMTable"
-                    filename="BOM"
-                    sheet="BOM"
-                    buttonText="Export"
-                  />
+                  <Button onClick={() => this.combineExportButtons()}>
+                    <BiSave size={40} /> <b>{"Save & Export"}</b>
+                  </Button>
+                  <div style={{ display: "none" }}>
+                    <ReactToExcel
+                      id="r2xl"
+                      className="btn-primary"
+                      filename={this.state.uniqueId}
+                      table="BOMTable"
+                      sheet="BOM"
+                      buttonText="Export"
+                    />
+                  </div>
                 </Row>
               </div>
               <div style={{ display: "none" }}>
@@ -97,7 +114,7 @@ class MainDesign extends Component {
                     </tr>
                     <tbody>
                       {this.props.BOM.map((item) => (
-                        <tr>
+                        <tr key={item.name}>
                           <td>{item.name}</td>
                           <td>{item.type}</td>
                           <td>{item.consumption}</td>
@@ -106,7 +123,7 @@ class MainDesign extends Component {
                         </tr>
                       ))}
                       {this.props.CMT.map((item) => (
-                        <tr>
+                        <tr key={item.name}>
                           <td>{item.activity}</td>
                           <td>CMT</td>
                           <td>{item.consumption}</td>

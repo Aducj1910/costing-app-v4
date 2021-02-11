@@ -14,7 +14,12 @@ const Fabric_Canvas_My = (props) => {
     currentPatternComp,
     deleteActiveObject,
     compDict,
+    exportName,
     bgColor,
+    currentCompId,
+    subtractFromCost,
+    dataExportSwitch,
+    exportCanvas,
   } = props;
 
   var editButtonRef = useRef(null);
@@ -27,7 +32,7 @@ const Fabric_Canvas_My = (props) => {
   const initCanvas = () =>
     new fabric.Canvas("canvas", {
       height: 500,
-      width: 700,
+      width: 600,
       // backgroundColor: "red",
     });
 
@@ -52,6 +57,7 @@ const Fabric_Canvas_My = (props) => {
   const addComponent = () => {
     comp.src = currentComp;
     comp_ = new fabric.Image(comp); //left, top are used to indicate the inital render position of the object
+    comp_.compId = currentCompId;
     componentsGroup.addWithUpdate(comp_);
 
     canvas.on("selection:created", function (options) {
@@ -67,12 +73,12 @@ const Fabric_Canvas_My = (props) => {
     canvas.add(comp_);
   };
 
-  const getEditedObjectSrc = (objSrc) => {
-    addEditedObject(objSrc);
+  const getEditedObjectSrc = (objSrc, ID) => {
+    addEditedObject(objSrc, ID);
   };
 
   //removes selected object and adds the edited object in its place
-  const addEditedObject = (localSrc) => {
+  const addEditedObject = (localSrc, ID) => {
     //getting position of the original object
 
     let editedCompImage = new Image();
@@ -81,6 +87,7 @@ const Fabric_Canvas_My = (props) => {
       top: localEditComp.top + localEditComp.height / 2,
       left: localEditComp.left + localEditComp.width / 2,
     });
+    editedObjectToRender.compId = ID;
     canvas.remove(localEditComp);
     canvas.add(editedObjectToRender);
   };
@@ -106,12 +113,24 @@ const Fabric_Canvas_My = (props) => {
   };
 
   const removeObject = () => {
+    subtractFromCost(canvas.getActiveObject().compId);
     canvas.remove(canvas.getActiveObject());
   };
 
   const editingObjectGetter = () => {
     localEditComp = canvas.getActiveObject();
     return canvas.getActiveObject();
+  };
+
+  const exportToPNG = () => {
+    let garment = canvas
+      .toDataURL("garment/png", 1.0)
+      .replace("garment/png", "garment/octet-stream");
+    var link = document.createElement("a");
+    link.download = exportName + ".png";
+    link.href = garment;
+    link.click();
+    exportCanvas();
   };
 
   if (silhouetteRenderSwitch) {
@@ -124,6 +143,10 @@ const Fabric_Canvas_My = (props) => {
 
   if (patternRenderSwitch) {
     addPattern();
+  }
+
+  if (dataExportSwitch) {
+    exportToPNG();
   }
 
   // if (colorRenderSwitch) {

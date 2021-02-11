@@ -1,3 +1,5 @@
 Units in result.jsx & configPage.jsx
 
 Result to CSX/XLSX/PDF
+
+Edit component config from configPage.jsx

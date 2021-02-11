@@ -30,7 +30,9 @@ class App extends Component {
     deleteActiveObject: false,
     editingModeOn: false,
     currentComp: null,
+    currentCompId: null,
     currentSilhouette: null,
+    componentDrawnTracker: [],
     bgColor: "#ffffff",
     buttonProcessing: [0, "outline-warning", "Process"],
     compDict: {},
@@ -44,6 +46,7 @@ class App extends Component {
     importedSilhouetteFiles: [],
     latestSilhouettes: [],
     dataExportSwitch: false,
+    exportName: null,
   };
 
   componentDidMount() {
@@ -205,14 +208,61 @@ class App extends Component {
     });
   };
 
+  subtractFromCost = (deleteId) => {
+    console.log(this.state.CMT);
+    let componentDrawnTracker = this.state.componentDrawnTracker;
+    let BOM = this.state.BOM;
+    let CMT = this.state.CMT;
+    let compToDelete = null;
+    componentDrawnTracker.forEach((element) => {
+      if (element.id === deleteId) {
+        compToDelete = element;
+      }
+    });
+    BOM.forEach((snapshot) => {
+      compToDelete.BOM.forEach((element) => {
+        if (snapshot.name === element.name) {
+          snapshot.consumption = snapshot.consumption - element.consumption;
+        }
+      });
+    });
+    CMT.forEach((snapshot) => {
+      compToDelete.CMT.forEach((element) => {
+        if (snapshot.activity === element.activity) {
+          snapshot.consumption = snapshot.consumption - element.consumption;
+        }
+      });
+    });
+    this.calculateCost();
+  };
+
+  exportCanvas = (exportId) => {
+    console.log("Yo");
+    this.setState({
+      dataExportSwitch: !this.state.dataExportSwitch,
+      exportName: exportId,
+    });
+  };
+
   drawComponent = (
     componentComp,
     componentConfig,
     componentCMTConfig,
-    componentNameIdArray
+    componentNameIdArray //0 - Name, 1 - ID
   ) => {
+    let componentDrawnTracker = this.state.componentDrawnTracker;
+    let uniqueId = Math.random().toString(36).substring(7);
+    let objToPush = {
+      id: uniqueId,
+      BOM: componentConfig,
+      CMT: componentCMTConfig,
+    };
+    componentDrawnTracker.push(objToPush);
+
     this.setState({
       currentComp: componentComp,
+      currentCompId: uniqueId,
+      componentDrawnTracker,
       componentRenderSwitch: true,
       silhouetteRenderSwitch: false,
       patternRenderSwitch: false,
@@ -227,7 +277,6 @@ class App extends Component {
       if (element.id == componentNameIdArray[1]) {
         if (element.count == 0) {
           repeatAddition = true;
-          console.log("Repeated");
         }
       }
     });
@@ -239,7 +288,6 @@ class App extends Component {
     );
 
     if (componentAlreadyDrawn == false) {
-      console.log("called");
       componentCMTConfig = [];
       componentConfig = [];
     }
@@ -554,10 +602,6 @@ class App extends Component {
     });
   };
 
-  exportData = () => {
-    this.setState({ dataExportSwitch: !this.state.dataExportSwitch });
-  };
-
   render() {
     return (
       <div>
@@ -571,7 +615,8 @@ class App extends Component {
             onHandleUploadedSilhouetteMaskFiles={
               this.handleUploadedSilhouetteMaskFiles
             }
-            exportData={this.exportData}
+            exportCanvas={this.exportCanvas}
+            dataExportSwitch={this.state.dataExportSwitch}
             combinedSilhouettesArray={this.state.combinedSilhouettesArray}
             onHandleSilhouettesCombine={this.handleSilhouettesCombine}
             onComponentFilesUploadData={this.componentFilesUploadData}
@@ -586,6 +631,8 @@ class App extends Component {
             drawComponent={this.drawComponent}
             drawSilhouettes={this.drawSilhouettes}
             drawPattern={this.drawPattern}
+            exportName={this.state.exportName}
+            currentCompId={this.state.currentCompId}
             buttonProcessing={this.state.buttonProcessing}
             silhouetteRenderSwitch={this.state.silhouetteRenderSwitch}
             currentSilhouette={this.state.currentSilhouette}
@@ -594,6 +641,7 @@ class App extends Component {
             deleteActiveObject={this.state.deleteActiveObject}
             editingModeOn={this.state.editingModeOn}
             bgColor={this.state.bgColor}
+            subtractFromCost={this.subtractFromCost}
             onHandleColorChangeComplete={this.handleColorChangeComplete}
             onHandleColorUpload={this.handleColorUpload}
             compDict={this.state.compDict}
@@ -604,7 +652,7 @@ class App extends Component {
           ></MainDesign>
         </Route>
         {this.state.importedComponentFiles.map((item) => (
-          <Route path={"/configcomponents" + item.id}>
+          <Route key={item.id} path={"/configcomponents" + item.id}>
             <ConfigPage
               switch="components"
               id={item.id}
@@ -616,7 +664,7 @@ class App extends Component {
           </Route>
         ))}
         {this.state.importedSilhouetteFiles.map((item) => (
-          <Route path={"/configsilhouettes" + item.id}>
+          <Route key={item.id} path={"/configsilhouettes" + item.id}>
             <ConfigPage
               switch="silhouettes"
               id={item.id}

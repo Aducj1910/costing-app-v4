@@ -6,10 +6,9 @@ import { AiTwotoneDelete } from "react-icons/ai";
 class ConfigPage extends Component {
   state = {};
 
-  getBOMStuff = () => {
-    console.log(this.props.config);
+  getBOM = () => {
     return this.props.config.map((item) => (
-      <tr>
+      <tr key={item.name}>
         <td>{item.name}</td>
         <td>{item.type}</td>
         <td>
@@ -17,6 +16,23 @@ class ConfigPage extends Component {
         </td>
         <td>
           <button style={{ border: "none", background: "none" }}>
+            <AiTwotoneDelete />
+          </button>
+        </td>
+      </tr>
+    ));
+  };
+
+  getCMT = () => {
+    return this.props.CMT_config.map((item) => (
+      <tr key={item.activity}>
+        <td>{item.activity}</td>
+        <td>
+          <input type="text" defaultValue={item.consumption} />
+        </td>
+        <td>
+          <button style={{ border: "none", background: "none" }}>
+            {" "}
             <AiTwotoneDelete />
           </button>
         </td>
@@ -35,14 +51,24 @@ class ConfigPage extends Component {
         </Row>
         <Table striped bordered hover>
           <thead>
-            <th>Item name</th>
+            <th>BOM Item name</th>
             <th>Item type</th>
             <th>Consumption</th>
             <th>
               <p></p>
             </th>
           </thead>
-          {this.getBOMStuff()}
+          <tbody>{this.getBOM()}</tbody>
+        </Table>
+        <Table striped bordered hover>
+          <thead>
+            <th>CMT Activity</th>
+            <th>Consumption</th>
+            <th>
+              <p></p>
+            </th>
+          </thead>
+          <tbody>{this.getCMT()}</tbody>
         </Table>
       </div>
     );
