@@ -87,6 +87,8 @@ class AddComponentPage extends Component {
     let CMTitemCountArray = this.state.CMTitemCountArray;
     let typeObjList = [];
     let CMTtypeObjList = [];
+    let BOMItemsArray = this.state.BOMItemsArray;
+    console.log(BOMItemsArray);
 
     BOMitemCountArray.forEach((element) => {
       let itemName = document.getElementById("name-lbl" + element).innerHTML;

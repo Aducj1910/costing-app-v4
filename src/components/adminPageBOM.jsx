@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import NavBar from "./navBar";
 import { db, auth } from "../services/firebase";
-import { Table } from "react-bootstrap";
+import { Row, Table, DropdownButton, Dropdown, Button } from "react-bootstrap";
 import { BsPlusCircleFill } from "react-icons/bs";
 import { AiTwotoneDelete, AiFillEdit, AiTwotoneEdit } from "react-icons/ai";
 import { FcCheckmark } from "react-icons/fc";
@@ -10,7 +10,10 @@ class AdminPageBOM extends Component {
   state = {
     BOMItemsArray: [],
     customRowAddBool: false,
+    titlebgColor: false,
     currentIdEditing: -1,
+    limitsArray: [],
+    selectedRange: null,
   };
 
   deleteBOMItem = (itemToDelId) => {
@@ -46,8 +49,39 @@ class AdminPageBOM extends Component {
     }
   };
 
+  newLimit = () => {
+    let inputLimits = document.getElementById("limitInput").value;
+    let inputLimitsArr = inputLimits.split("-");
+    let limitsObject = { lower: inputLimitsArr[0], upper: inputLimitsArr[1] };
+    let limitsArray = this.state.limitsArray;
+    limitsArray.push(limitsObject);
+    this.setState({ limitsArray });
+  };
+
+  editingItemsConfirmed = () => {
+    this.state.BOMItemsArray.forEach((element) => {
+      let rate = document.getElementById(element.id + "rate").value;
+      let objLimits = this.state.limitsArray[this.state.limitsArray.length - 1];
+      let rateName = "rate" + objLimits.lower + "-" + objLimits.upper + "_";
+      element[rateName] = rate;
+      console.log(element);
+      db.collection("BOM").doc(element.id).set(element);
+    });
+  };
+
   getBOMTableContent = () => {
     //BOM TABLE CONTENT RENDER
+    let rateDisplay = null;
+    if (this.state.selectedRange !== null) {
+      rateDisplay =
+        this.state.selectedRange.lower +
+        "-" +
+        this.state.selectedRange.upper +
+        "_";
+    } else {
+      rateDisplay = "rate";
+    }
+
     return this.state.BOMItemsArray.map((item) => (
       <tr key={item.id}>
         <td>{item.id}</td>
@@ -61,7 +95,11 @@ class AdminPageBOM extends Component {
           <input id={item.id + "unit"} type="text" defaultValue={item.unit} />
         </td>
         <td>
-          <input id={item.id + "rate"} type="text" defaultValue={item.rate} />
+          <input
+            id={item.id + "rate"}
+            type="text"
+            defaultValue={item[rateDisplay]}
+          />
         </td>
         <td>
           <button
@@ -83,6 +121,16 @@ class AdminPageBOM extends Component {
         </td>
       </tr>
     ));
+  };
+
+  toggleEditingMode = () => {
+    if (this.state.titlebgColor == false) {
+      this.setState({ titlebgColor: "green" });
+      this.newLimit();
+    } else {
+      this.setState({ titlebgColor: false });
+      this.editingItemsConfirmed();
+    }
   };
 
   componentDidMount = () => {
@@ -170,15 +218,38 @@ class AdminPageBOM extends Component {
     );
   };
 
+  // onRangeSelect = (selectedLimitsObj) => {
+  //   this.setState({ selectedRange: selectedLimitsObj });
+  // };
+
   render() {
     return (
       <div id="main_table">
         <header>
           <NavBar />
         </header>
-        <Table striped bordered hover>
+        <Row className="m-2">
+          <DropdownButton>
+            {/* {this.state.limitsArray.map((
+              limit //DO THIS NEXT
+            ) => (
+              <Dropdown.Item onClick={() => this.onRangeSelect(limit)}>
+                {limit.lower}-{limit.upper}
+              </Dropdown.Item>
+            ))} */}
+          </DropdownButton>
+          <input id="limitInput" className="ml-2" type="text" />
+          <Button
+            className="ml-2"
+            variant="success"
+            onClick={() => this.toggleEditingMode()}
+          >
+            {this.state.titlebgColor == false ? "Edit" : "Confirm"}
+          </Button>
+        </Row>
+        <Table className="mt-2" striped bordered hover>
           <thead>
-            <tr>
+            <tr style={{ backgroundColor: this.state.titlebgColor }}>
               <th>Id</th>
               <th>Item name</th>
               <th>Item type</th>
