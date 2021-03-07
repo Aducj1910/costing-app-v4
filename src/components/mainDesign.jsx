@@ -67,7 +67,7 @@ class MainDesign extends Component {
                 compDict={this.props.compDict}
                 subtractFromCost={this.props.subtractFromCost}
                 currentCompId={this.props.currentCompId}
-                exportCanvas={this.props.exportCanvas}
+                changeDataExportSwitch={this.props.changeDataExportSwitch}
                 dataExportSwitch={this.props.dataExportSwitch}
               />
             </Col>

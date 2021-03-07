@@ -19,7 +19,7 @@ const Fabric_Canvas_My = (props) => {
     currentCompId,
     subtractFromCost,
     dataExportSwitch,
-    exportCanvas,
+    changeDataExportSwitch,
   } = props;
 
   var editButtonRef = useRef(null);
@@ -123,14 +123,28 @@ const Fabric_Canvas_My = (props) => {
   };
 
   const exportToPNG = () => {
-    let garment = canvas
-      .toDataURL("garment/png", 1.0)
-      .replace("garment/png", "garment/octet-stream");
-    var link = document.createElement("a");
-    link.download = exportName + ".png";
-    link.href = garment;
-    link.click();
-    exportCanvas();
+    // let garment = canvas
+    //   .toDataURL("garment/png", 1.0)
+    //   .replace("garment/png", "garment/octet-stream");
+    // var link = document.createElement("a");
+    // link.download = exportName + ".png";
+    // link.href = garment;
+    // link.click();
+
+    changeDataExportSwitch();
+  };
+
+  const getBase64Image = (img) => {
+    var expCanvas = document.createElement("canvas");
+    expCanvas.width = img.width;
+    expCanvas.height = img.height;
+
+    var ctx = expCanvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+
+    var imgDataInit = ctx.getImageData(0, 0, expCanvas.width, expCanvas.height);
+    let imgd = imgDataInit.data;
+    console.log(imgd);
   };
 
   if (silhouetteRenderSwitch) {

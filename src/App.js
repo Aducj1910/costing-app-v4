@@ -237,10 +237,15 @@ class App extends Component {
   };
 
   exportCanvas = (exportId) => {
-    console.log("Yo");
     this.setState({
       dataExportSwitch: !this.state.dataExportSwitch,
       exportName: exportId,
+    });
+  };
+
+  changeDataExportSwitch = () => {
+    this.setState({
+      dataExportSwitch: !this.state.dataExportSwitch,
     });
   };
 
@@ -615,6 +620,7 @@ class App extends Component {
             onHandleUploadedSilhouetteMaskFiles={
               this.handleUploadedSilhouetteMaskFiles
             }
+            changeDataExportSwitch={this.changeDataExportSwitch}
             exportCanvas={this.exportCanvas}
             dataExportSwitch={this.state.dataExportSwitch}
             combinedSilhouettesArray={this.state.combinedSilhouettesArray}
