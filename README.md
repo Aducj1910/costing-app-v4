@@ -5,3 +5,6 @@ You can drag around the components for exact placement and at the end get the co
 
 ## Release
 The pre-release of the app has been put out but it is still has several bugs in it. A publicly available version will be put out as soon as those bugs are fixed. 
+
+## Update
+Development of the web-app has been halted since I am a sole developer and am currently focusing more on some other projects. But this project will be continued in the near future.
